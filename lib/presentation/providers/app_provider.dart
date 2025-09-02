@@ -5,14 +5,12 @@ class AppProvider extends ChangeNotifier {
   bool _isLoading = false;
   String? _errorMessage;
   bool _isDarkMode = false;
-  String _currentLanguage = 'ar';
 
   // Getters
   int get selectedPageIndex => _selectedPageIndex;
   bool get isLoading => _isLoading;
   String? get errorMessage => _errorMessage;
   bool get isDarkMode => _isDarkMode;
-  String get currentLanguage => _currentLanguage;
 
   // Navigation
   void setSelectedPageIndex(int index) {
@@ -45,17 +43,6 @@ class AppProvider extends ChangeNotifier {
 
   void setTheme(bool isDark) {
     _isDarkMode = isDark;
-    notifyListeners();
-  }
-
-  // Language
-  void setLanguage(String language) {
-    _currentLanguage = language;
-    notifyListeners();
-  }
-
-  void toggleLanguage() {
-    _currentLanguage = _currentLanguage == 'ar' ? 'en' : 'ar';
     notifyListeners();
   }
 

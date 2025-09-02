@@ -2,8 +2,10 @@ import 'package:fluent_ui/fluent_ui.dart';
 import 'package:provider/provider.dart';
 import '../../../../core/constants/dimensions.dart';
 import '../../../../core/constants/colors.dart';
+import '../../../../core/utils/app_localizations.dart';
 import '../../../../data/models/export_record.dart';
 import '../../../providers/export_provider.dart';
+import '../../../widgets/common/rtl_widgets.dart';
 
 class RecentExports extends StatefulWidget {
   const RecentExports({super.key});
@@ -15,28 +17,28 @@ class RecentExports extends StatefulWidget {
 class _RecentExportsState extends State<RecentExports> {
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return RtlContainer(
       padding: const EdgeInsets.all(AppDimensions.paddingLarge),
       decoration: BoxDecoration(
         color: AppColors.surface,
         borderRadius: BorderRadius.circular(AppDimensions.radiusLarge),
         border: Border.all(color: AppColors.border),
       ),
-      child: Column(
+      child: RtlColumn(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
+          RtlRow(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(
-                'آخر عمليات التصدير',
+              LocalizedText(
+                (l) => l.recentExports,
                 style: FluentTheme.of(context).typography.subtitle,
               ),
               Button(
                 onPressed: () {
                   // Navigate to exports page
                 },
-                child: const Text('عرض الكل'),
+                child: LocalizedText((l) => 'عرض الكل'),
               ),
             ],
           ),
@@ -50,7 +52,7 @@ class _RecentExportsState extends State<RecentExports> {
 
                 if (exportProvider.exportRecords.isEmpty) {
                   return Center(
-                    child: Column(
+                    child: RtlColumn(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Icon(
@@ -59,8 +61,8 @@ class _RecentExportsState extends State<RecentExports> {
                           color: AppColors.textHint,
                         ),
                         const SizedBox(height: AppDimensions.marginMedium),
-                        Text(
-                          'لا توجد عمليات تصدير حتى الآن',
+                        LocalizedText(
+                          (l) => 'لا توجد عمليات تصدير حتى الآن',
                           style: FluentTheme.of(context).typography.body
                               ?.copyWith(color: AppColors.textSecondary),
                         ),
@@ -91,14 +93,14 @@ class _RecentExportsState extends State<RecentExports> {
   }
 
   Widget _buildExportItem(ExportRecord export) {
-    return Container(
+    return RtlContainer(
       padding: const EdgeInsets.all(AppDimensions.paddingMedium),
       decoration: BoxDecoration(
         color: AppColors.surfaceVariant,
         borderRadius: BorderRadius.circular(AppDimensions.radiusMedium),
         border: Border.all(color: AppColors.border),
       ),
-      child: Row(
+      child: RtlRow(
         children: [
           Container(
             width: 40,
@@ -111,7 +113,7 @@ class _RecentExportsState extends State<RecentExports> {
           ),
           const SizedBox(width: AppDimensions.marginMedium),
           Expanded(
-            child: Column(
+            child: RtlColumn(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(

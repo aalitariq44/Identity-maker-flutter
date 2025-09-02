@@ -2,10 +2,12 @@ import 'package:fluent_ui/fluent_ui.dart';
 import 'package:provider/provider.dart';
 import '../../../../core/constants/dimensions.dart';
 import '../../../../core/constants/colors.dart';
+import '../../../../core/utils/app_localizations.dart';
 import '../../../providers/school_provider.dart';
 import '../../../providers/student_provider.dart';
 import '../../../providers/template_provider.dart';
 import '../../../providers/export_provider.dart';
+import '../../../widgets/common/rtl_widgets.dart';
 
 class DashboardStats extends StatefulWidget {
   const DashboardStats({super.key});
@@ -35,18 +37,18 @@ class _DashboardStatsState extends State<DashboardStats> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return RtlContainer(
       padding: const EdgeInsets.all(AppDimensions.paddingLarge),
       decoration: BoxDecoration(
         color: AppColors.surface,
         borderRadius: BorderRadius.circular(AppDimensions.radiusLarge),
         border: Border.all(color: AppColors.border),
       ),
-      child: Column(
+      child: RtlColumn(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            'إحصائيات عامة',
+          LocalizedText(
+            (l) => l.statistics,
             style: FluentTheme.of(context).typography.subtitle,
           ),
           const SizedBox(height: AppDimensions.marginLarge),
@@ -77,25 +79,29 @@ class _DashboardStatsState extends State<DashboardStats> {
                           childAspectRatio: 1.5,
                           children: [
                             _buildStatCard(
-                              'المدارس',
+                              context,
+                              (l) => l.schools,
                               schoolProvider.schools.length.toString(),
                               FluentIcons.education,
                               AppColors.primary,
                             ),
                             _buildStatCard(
-                              'الطلاب',
+                              context,
+                              (l) => l.students,
                               studentProvider.students.length.toString(),
                               FluentIcons.people,
                               AppColors.secondary,
                             ),
                             _buildStatCard(
-                              'القوالب',
+                              context,
+                              (l) => l.templates,
                               templateProvider.templates.length.toString(),
                               FluentIcons.design,
                               AppColors.success,
                             ),
                             _buildStatCard(
-                              'العمليات',
+                              context,
+                              (l) => l.export,
                               exportStats['totalExports'].toString(),
                               FluentIcons.export,
                               AppColors.warning,
@@ -111,7 +117,8 @@ class _DashboardStatsState extends State<DashboardStats> {
   }
 
   Widget _buildStatCard(
-    String title,
+    BuildContext context,
+    String Function(AppLocalizations) titleCallback,
     String value,
     IconData icon,
     Color color,
@@ -123,7 +130,7 @@ class _DashboardStatsState extends State<DashboardStats> {
         borderRadius: BorderRadius.circular(AppDimensions.radiusMedium),
         border: Border.all(color: color.withOpacity(0.2)),
       ),
-      child: Column(
+      child: RtlColumn(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Icon(icon, size: 32, color: color),
@@ -136,8 +143,8 @@ class _DashboardStatsState extends State<DashboardStats> {
             ),
           ),
           const SizedBox(height: AppDimensions.marginTiny),
-          Text(
-            title,
+          LocalizedText(
+            titleCallback,
             style: FluentTheme.of(
               context,
             ).typography.body?.copyWith(color: AppColors.textSecondary),
