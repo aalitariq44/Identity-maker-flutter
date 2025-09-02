@@ -102,40 +102,17 @@ class _AddStudentDialogState extends State<AddStudentDialog> {
                     // Birth date
                     InfoLabel(
                       label: 'تاريخ الميلاد *',
-                      child: GestureDetector(
-                        onTap: _selectBirthDate,
-                        child: Container(
-                          height: 32,
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 12,
-                            vertical: 8,
-                          ),
-                          decoration: BoxDecoration(
-                            border: Border.all(color: const Color(0xFFE0E0E0)),
-                            borderRadius: BorderRadius.circular(4),
-                          ),
-                          child: Row(
-                            children: [
-                              Expanded(
-                                child: Text(
-                                  _birthDate != null
-                                      ? _formatDate(_birthDate!)
-                                      : 'اختر تاريخ الميلاد',
-                                  style: TextStyle(
-                                    color: _birthDate != null
-                                        ? const Color(0xFF000000)
-                                        : const Color(0xFF999999),
-                                  ),
-                                ),
-                              ),
-                              const Icon(
-                                FluentIcons.calendar,
-                                size: 16,
-                                color: Color(0xFF999999),
-                              ),
-                            ],
-                          ),
-                        ),
+                      child: DatePicker(
+                        selected: _birthDate,
+                        onChanged: (date) {
+                          setState(() {
+                            _birthDate = date;
+                          });
+                        },
+                        showDay: true,
+                        showMonth: true,
+                        showYear: true,
+                        locale: const Locale('ar', 'SA'),
                       ),
                     ),
                     const SizedBox(height: 12),
@@ -272,59 +249,6 @@ class _AddStudentDialogState extends State<AddStudentDialog> {
     }
   }
 
-  Future<void> _selectBirthDate() async {
-    // For now, we'll use a simple text input approach
-    // In a real app, you'd implement a proper date picker
-    final dateController = TextEditingController();
-    if (_birthDate != null) {
-      dateController.text = _formatDate(_birthDate!);
-    }
-
-    final result = await showDialog<String>(
-      context: context,
-      builder: (context) => ContentDialog(
-        title: const Text('تاريخ الميلاد'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const Text('أدخل تاريخ الميلاد بالصيغة: يوم/شهر/سنة'),
-            const SizedBox(height: 12),
-            TextBox(
-              controller: dateController,
-              placeholder: 'مثال: 15/06/2010',
-            ),
-          ],
-        ),
-        actions: [
-          Button(
-            onPressed: () => Navigator.of(context).pop(),
-            child: const Text('إلغاء'),
-          ),
-          FilledButton(
-            onPressed: () => Navigator.of(context).pop(dateController.text),
-            child: const Text('موافق'),
-          ),
-        ],
-      ),
-    );
-
-    if (result != null && result.isNotEmpty) {
-      try {
-        final parts = result.split('/');
-        if (parts.length == 3) {
-          final day = int.parse(parts[0]);
-          final month = int.parse(parts[1]);
-          final year = int.parse(parts[2]);
-          setState(() {
-            _birthDate = DateTime(year, month, day);
-          });
-        }
-      } catch (e) {
-        _showErrorMessage('تاريخ غير صحيح. يرجى استخدام الصيغة: يوم/شهر/سنة');
-      }
-    }
-  }
-
   void _saveStudent() async {
     if (!_validateForm()) return;
 
@@ -415,9 +339,5 @@ class _AddStudentDialogState extends State<AddStudentDialog> {
 
   void _showSuccessMessage(String message) {
     // This would typically show a toast or snackbar
-  }
-
-  String _formatDate(DateTime date) {
-    return '${date.day}/${date.month}/${date.year}';
   }
 }
