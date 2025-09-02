@@ -26,7 +26,10 @@ class _HomePageState extends State<HomePage> {
       builder: (context, appProvider, child) {
         return RtlNavigationView(
           appBar: NavigationAppBar(
-            title: LocalizedText((l) => l.appName),
+            title: LocalizedText(
+              (l) => l.appName,
+              style: const TextStyle(color: Colors.black),
+            ),
             automaticallyImplyLeading: false,
             actions: Row(
               mainAxisAlignment: MainAxisAlignment.end,
