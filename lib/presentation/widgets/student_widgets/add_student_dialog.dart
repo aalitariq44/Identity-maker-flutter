@@ -16,14 +16,36 @@ class AddStudentDialog extends StatefulWidget {
 class _AddStudentDialogState extends State<AddStudentDialog> {
   final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
-  final _gradeController = TextEditingController();
 
   DateTime? _birthDate;
   int? _selectedSchoolId;
   String? _photoPath;
+  String? _selectedGrade;
   bool _isLoading = false;
 
   bool get isEditing => widget.student != null;
+
+  // Grade options
+  final List<String> _gradeOptions = [
+    // Primary grades
+    'الأول الابتدائي',
+    'الثاني الابتدائي',
+    'الثالث الابتدائي',
+    'الرابع الابتدائي',
+    'الخامس الابتدائي',
+    'السادس الابتدائي',
+    // Intermediate grades
+    'الأول المتوسط',
+    'الثاني المتوسط',
+    'الثالث المتوسط',
+    // Secondary grades
+    'الرابع العلمي',
+    'الرابع الأدبي',
+    'الخامس العلمي',
+    'الخامس الأدبي',
+    'السادس العلمي',
+    'السادس الأدبي',
+  ];
 
   @override
   void initState() {
@@ -36,7 +58,7 @@ class _AddStudentDialogState extends State<AddStudentDialog> {
   void _loadStudentData() {
     final student = widget.student!;
     _nameController.text = student.name;
-    _gradeController.text = student.grade;
+    _selectedGrade = student.grade;
     _birthDate = student.birthDate;
     _selectedSchoolId = student.schoolId;
     _photoPath = student.photoPath;
@@ -45,7 +67,6 @@ class _AddStudentDialogState extends State<AddStudentDialog> {
   @override
   void dispose() {
     _nameController.dispose();
-    _gradeController.dispose();
     super.dispose();
   }
 
@@ -122,9 +143,20 @@ class _AddStudentDialogState extends State<AddStudentDialog> {
                     // Grade
                     InfoLabel(
                       label: 'الصف *',
-                      child: TextBox(
-                        controller: _gradeController,
-                        placeholder: 'أدخل صف الطالب (مثل: الصف الأول)',
+                      child: ComboBox<String>(
+                        placeholder: const Text('اختر صف الطالب'),
+                        value: _selectedGrade,
+                        items: _gradeOptions.map((grade) {
+                          return ComboBoxItem<String>(
+                            value: grade,
+                            child: Text(grade),
+                          );
+                        }).toList(),
+                        onChanged: (value) {
+                          setState(() {
+                            _selectedGrade = value;
+                          });
+                        },
                       ),
                     ),
                     const SizedBox(height: 12),
@@ -308,7 +340,7 @@ class _AddStudentDialogState extends State<AddStudentDialog> {
         final updatedStudent = widget.student!.copyWith(
           name: _nameController.text.trim(),
           birthDate: _birthDate!,
-          grade: _gradeController.text.trim(),
+          grade: _selectedGrade!,
           schoolId: _selectedSchoolId!,
           photoPath: _photoPath,
         );
@@ -317,7 +349,7 @@ class _AddStudentDialogState extends State<AddStudentDialog> {
         final newStudent = Student(
           name: _nameController.text.trim(),
           birthDate: _birthDate!,
-          grade: _gradeController.text.trim(),
+          grade: _selectedGrade!,
           schoolId: _selectedSchoolId!,
           photoPath: _photoPath,
           createdAt: DateTime.now(),
@@ -352,8 +384,8 @@ class _AddStudentDialogState extends State<AddStudentDialog> {
       _showErrorMessage('يرجى اختيار تاريخ الميلاد');
       return false;
     }
-    if (_gradeController.text.trim().isEmpty) {
-      _showErrorMessage('يرجى إدخال صف الطالب');
+    if (_selectedGrade == null || _selectedGrade!.isEmpty) {
+      _showErrorMessage('يرجى اختيار صف الطالب');
       return false;
     }
     if (_selectedSchoolId == null) {
