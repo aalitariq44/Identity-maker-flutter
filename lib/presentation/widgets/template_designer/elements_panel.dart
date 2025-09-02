@@ -81,9 +81,12 @@ class ElementsPanel extends StatelessWidget {
           style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500),
         ),
         const SizedBox(height: 4),
-        Wrap(
-          spacing: 4,
-          runSpacing: 4,
+        GridView.count(
+          crossAxisCount: 3,
+          shrinkWrap: true,
+          physics: NeverScrollableScrollPhysics(),
+          mainAxisSpacing: 4,
+          crossAxisSpacing: 4,
           children: [
             _buildQuickAddButton(
               'اسم الطالب',
@@ -134,9 +137,12 @@ class ElementsPanel extends StatelessWidget {
           style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500),
         ),
         const SizedBox(height: 4),
-        Wrap(
-          spacing: 4,
-          runSpacing: 4,
+        GridView.count(
+          crossAxisCount: 3,
+          shrinkWrap: true,
+          physics: NeverScrollableScrollPhysics(),
+          mainAxisSpacing: 4,
+          crossAxisSpacing: 4,
           children: [
             _buildQuickAddButton(
               'صورة الطالب',
@@ -176,9 +182,12 @@ class ElementsPanel extends StatelessWidget {
           style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500),
         ),
         const SizedBox(height: 4),
-        Wrap(
-          spacing: 4,
-          runSpacing: 4,
+        GridView.count(
+          crossAxisCount: 3,
+          shrinkWrap: true,
+          physics: NeverScrollableScrollPhysics(),
+          mainAxisSpacing: 4,
+          crossAxisSpacing: 4,
           children: [
             _buildQuickAddButton(
               'مستطيل',
