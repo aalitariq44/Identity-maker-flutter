@@ -60,27 +60,42 @@ class _HomePageState extends State<HomePage> {
             items: [
               PaneItem(
                 icon: const Icon(FluentIcons.home),
-                title: LocalizedText((l) => l.home),
+                title: const Text(
+                  'الصفحة الرئيسية',
+                  style: TextStyle(color: Colors.black),
+                ),
                 body: _buildHomePage(),
               ),
               PaneItem(
                 icon: const Icon(FluentIcons.contact),
-                title: LocalizedText((l) => l.idCreation),
+                title: const Text(
+                  'إنشاء الهويات',
+                  style: TextStyle(color: Colors.black),
+                ),
                 body: const IdCreationPage(),
               ),
               PaneItem(
                 icon: const Icon(FluentIcons.people),
-                title: LocalizedText((l) => l.studentsManagement),
+                title: const Text(
+                  'الطلاب',
+                  style: TextStyle(color: Colors.black),
+                ),
                 body: const StudentsPage(),
               ),
               PaneItem(
                 icon: const Icon(FluentIcons.design),
-                title: LocalizedText((l) => l.templateManagement),
+                title: const Text(
+                  'القوالب',
+                  style: TextStyle(color: Colors.black),
+                ),
                 body: const TemplatesPage(),
               ),
               PaneItem(
                 icon: const Icon(FluentIcons.test_parameter),
-                title: const Text('RTL Test'),
+                title: const Text(
+                  'RTL Test',
+                  style: TextStyle(color: Colors.black),
+                ),
                 body: const TestRtlPage(),
               ),
             ],
