@@ -9,16 +9,23 @@ import '../../widgets/template_designer/properties_panel.dart';
 import '../../widgets/template_designer/elements_panel.dart';
 import '../../../data/models/template.dart';
 
-class TemplateDesignerPage extends StatelessWidget {
+class TemplateDesignerPage extends StatefulWidget {
   final Template? initialTemplate;
 
   const TemplateDesignerPage({super.key, this.initialTemplate});
 
   @override
+  State<TemplateDesignerPage> createState() => _TemplateDesignerPageState();
+}
+
+class _TemplateDesignerPageState extends State<TemplateDesignerPage> {
+  int _currentTabIndex = 0;
+
+  @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
       create: (context) =>
-          TemplateDesignerProvider()..loadTemplate(initialTemplate),
+          TemplateDesignerProvider()..loadTemplate(widget.initialTemplate),
       child: Consumer<TemplateDesignerProvider>(
         builder: (context, designerProvider, child) {
           return ScaffoldPage(
@@ -40,11 +47,90 @@ class TemplateDesignerPage extends StatelessWidget {
                   ),
                   child: Column(
                     children: [
-                      // Template Settings
-                      _buildTemplateSettings(context, designerProvider),
-                      const Divider(),
-                      // Elements Panel
-                      Expanded(child: const ElementsPanel()),
+                      // Tab Buttons
+                      Row(
+                        children: [
+                          Expanded(
+                            child: Button(
+                              onPressed: () =>
+                                  setState(() => _currentTabIndex = 0),
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 8,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: _currentTabIndex == 0
+                                      ? FluentTheme.of(
+                                          context,
+                                        ).accentColor.withOpacity(0.1)
+                                      : null,
+                                  border: Border(
+                                    bottom: BorderSide(
+                                      color: _currentTabIndex == 0
+                                          ? FluentTheme.of(context).accentColor
+                                          : Colors.transparent,
+                                      width: 2,
+                                    ),
+                                  ),
+                                ),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Icon(FluentIcons.settings, size: 16),
+                                    const SizedBox(width: 8),
+                                    Text('إعدادات القالب'),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                          Expanded(
+                            child: Button(
+                              onPressed: () =>
+                                  setState(() => _currentTabIndex = 1),
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 8,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: _currentTabIndex == 1
+                                      ? FluentTheme.of(
+                                          context,
+                                        ).accentColor.withOpacity(0.1)
+                                      : null,
+                                  border: Border(
+                                    bottom: BorderSide(
+                                      color: _currentTabIndex == 1
+                                          ? FluentTheme.of(context).accentColor
+                                          : Colors.transparent,
+                                      width: 2,
+                                    ),
+                                  ),
+                                ),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Icon(FluentIcons.stack, size: 16),
+                                    const SizedBox(width: 8),
+                                    Text('الطبقات'),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      // Tab Content
+                      Expanded(
+                        child: _currentTabIndex == 0
+                            ? SingleChildScrollView(
+                                child: _buildTemplateSettings(
+                                  context,
+                                  designerProvider,
+                                ),
+                              )
+                            : const ElementsPanel(),
+                      ),
                     ],
                   ),
                 ),
@@ -185,7 +271,203 @@ class TemplateDesignerPage extends StatelessWidget {
               ],
             ),
           ),
+          const SizedBox(height: 16),
+
+          // Quick Add Section
+          _buildQuickAddSection(provider),
         ],
+      ),
+    );
+  }
+
+  Widget _buildQuickAddSection(TemplateDesignerProvider provider) {
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(12),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'إضافة عنصر جديد',
+              style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13),
+            ),
+            const SizedBox(height: 12),
+
+            // Text Elements
+            _buildAddTextSection(provider),
+            const SizedBox(height: 8),
+
+            // Image Elements
+            _buildAddImageSection(provider),
+            const SizedBox(height: 8),
+
+            // Shape Elements
+            _buildAddShapeSection(provider),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildAddTextSection(TemplateDesignerProvider provider) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'نصوص',
+          style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500),
+        ),
+        const SizedBox(height: 4),
+        GridView.count(
+          crossAxisCount: 3,
+          shrinkWrap: true,
+          physics: NeverScrollableScrollPhysics(),
+          mainAxisSpacing: 4,
+          crossAxisSpacing: 4,
+          children: [
+            _buildQuickAddButton(
+              'اسم الطالب',
+              FluentIcons.contact,
+              () => provider.addTextElement(
+                text: 'الاسم: {student_name}',
+                properties: {'fontWeight': 'bold'},
+              ),
+            ),
+            _buildQuickAddButton(
+              'اسم المدرسة',
+              FluentIcons.education,
+              () => provider.addTextElement(
+                text: '{school_name_arabic}',
+                properties: {'fontSize': 16, 'fontWeight': 'bold'},
+              ),
+            ),
+            _buildQuickAddButton(
+              'الصف',
+              FluentIcons.number_field,
+              () => provider.addTextElement(text: 'الصف: {student_grade}'),
+            ),
+            _buildQuickAddButton(
+              'تاريخ الميلاد',
+              FluentIcons.calendar,
+              () => provider.addTextElement(
+                text: 'تاريخ الميلاد: {student_birth_date}',
+                properties: {'fontSize': 10},
+              ),
+            ),
+            _buildQuickAddButton(
+              'نص مخصص',
+              FluentIcons.text_field,
+              () => provider.addTextElement(text: 'نص جديد'),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget _buildAddImageSection(TemplateDesignerProvider provider) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'صور',
+          style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500),
+        ),
+        const SizedBox(height: 4),
+        GridView.count(
+          crossAxisCount: 3,
+          shrinkWrap: true,
+          physics: NeverScrollableScrollPhysics(),
+          mainAxisSpacing: 4,
+          crossAxisSpacing: 4,
+          children: [
+            _buildQuickAddButton(
+              'صورة الطالب',
+              FluentIcons.contact,
+              () => provider.addImageElement(
+                source: 'student_photo',
+                width: 1.5,
+                height: 2.0,
+              ),
+            ),
+            _buildQuickAddButton(
+              'شعار المدرسة',
+              FluentIcons.education,
+              () => provider.addImageElement(
+                source: 'school_logo',
+                width: 2.0,
+                height: 2.0,
+              ),
+            ),
+            _buildQuickAddButton(
+              'صورة مخصصة',
+              FluentIcons.photo2,
+              () => provider.addImageElement(source: 'custom_image'),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget _buildAddShapeSection(TemplateDesignerProvider provider) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'أشكال',
+          style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500),
+        ),
+        const SizedBox(height: 4),
+        GridView.count(
+          crossAxisCount: 3,
+          shrinkWrap: true,
+          physics: NeverScrollableScrollPhysics(),
+          mainAxisSpacing: 4,
+          crossAxisSpacing: 4,
+          children: [
+            _buildQuickAddButton(
+              'مستطيل',
+              FluentIcons.stop,
+              () => provider.addShapeElement(shapeType: 'rectangle'),
+            ),
+            _buildQuickAddButton(
+              'دائرة',
+              FluentIcons.radio_btn_on,
+              () => provider.addShapeElement(shapeType: 'circle'),
+            ),
+            _buildQuickAddButton(
+              'خط',
+              FluentIcons.line,
+              () => provider.addShapeElement(shapeType: 'line', height: 0.1),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget _buildQuickAddButton(
+    String label,
+    IconData icon,
+    VoidCallback onPressed,
+  ) {
+    return Button(
+      onPressed: onPressed,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(icon, size: 14),
+            const SizedBox(height: 2),
+            Text(
+              label,
+              style: TextStyle(fontSize: 9),
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
       ),
     );
   }

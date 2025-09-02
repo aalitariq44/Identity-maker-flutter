@@ -14,26 +14,6 @@ class ElementsPanel extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Header
-              Row(
-                children: [
-                  Text(
-                    'العناصر',
-                    style: FluentTheme.of(context).typography.subtitle,
-                  ),
-                  const Spacer(),
-                  Text(
-                    '${provider.elements.length}',
-                    style: FluentTheme.of(context).typography.caption,
-                  ),
-                ],
-              ),
-              const SizedBox(height: 16),
-
-              // Quick Add Section
-              _buildQuickAddSection(provider),
-              const SizedBox(height: 16),
-
               // Elements List
               Expanded(child: _buildElementsList(provider)),
             ],
