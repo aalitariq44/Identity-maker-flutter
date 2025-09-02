@@ -16,6 +16,11 @@ class StudentCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Debug: Print student data
+    print(
+      'StudentCard - Student ID: ${student.id}, Name: "${student.name}", Name length: ${student.name.length}, Is empty: ${student.name.isEmpty}',
+    );
+
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(12),
@@ -36,10 +41,22 @@ class StudentCard extends StatelessWidget {
 
             // Student name
             Text(
-              student.name,
-              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              student.name.isNotEmpty ? student.name : 'اسم الطالب غير محدد',
+              style: const TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                color: Colors.black,
+              ),
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
+            ),
+            const SizedBox(height: 8),
+
+            // Black divider line
+            Container(
+              height: 1,
+              color: Colors.black,
+              margin: const EdgeInsets.symmetric(vertical: 4),
             ),
             const SizedBox(height: 4),
 
