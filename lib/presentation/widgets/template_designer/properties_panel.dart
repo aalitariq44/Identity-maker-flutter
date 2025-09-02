@@ -42,16 +42,20 @@ class PropertiesPanel extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(FluentIcons.settings, size: 48, color: Colors.grey[120]),
+          Icon(
+            FluentIcons.settings,
+            size: 48,
+            color: Colors.grey.withOpacity(0.5),
+          ),
           const SizedBox(height: 16),
           Text(
             'لا يوجد عنصر محدد',
-            style: TextStyle(color: Colors.grey[120], fontSize: 14),
+            style: TextStyle(color: Colors.grey.withOpacity(0.5), fontSize: 14),
           ),
           const SizedBox(height: 8),
           Text(
             'اختر عنصراً لتعديل خصائصه',
-            style: TextStyle(color: Colors.grey[100], fontSize: 12),
+            style: TextStyle(color: Colors.grey.withOpacity(0.6), fontSize: 12),
           ),
         ],
       ),
@@ -117,7 +121,10 @@ class PropertiesPanel extends StatelessWidget {
                 Expanded(
                   child: Text(
                     element.id,
-                    style: TextStyle(fontSize: 12, color: Colors.grey[120]),
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: Colors.grey.withOpacity(0.5),
+                    ),
                     overflow: TextOverflow.ellipsis,
                   ),
                 ),
@@ -639,7 +646,7 @@ class PropertiesPanel extends StatelessWidget {
           height: 30,
           decoration: BoxDecoration(
             color: _parseColor(currentColor),
-            border: Border.all(color: Colors.grey[100]),
+            border: Border.all(color: Colors.grey.withOpacity(0.6)),
             borderRadius: BorderRadius.circular(4),
           ),
         ),
@@ -677,7 +684,7 @@ class PropertiesPanel extends StatelessWidget {
         margin: const EdgeInsets.only(right: 2),
         decoration: BoxDecoration(
           color: _parseColor(color),
-          border: Border.all(color: Colors.grey[100]),
+          border: Border.all(color: Colors.grey.withOpacity(0.6)),
           borderRadius: BorderRadius.circular(2),
         ),
       ),

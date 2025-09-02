@@ -124,20 +124,24 @@ class _TemplateManagementPageState extends State<TemplateManagementPage> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(FluentIcons.design, size: 64, color: Colors.grey[120]),
+          Icon(
+            FluentIcons.design,
+            size: 64,
+            color: Colors.grey.withOpacity(0.5),
+          ),
           const SizedBox(height: 24),
           Text(
             'لا توجد قوالب',
-            style: FluentTheme.of(
-              context,
-            ).typography.subtitle?.copyWith(color: Colors.grey[120]),
+            style: FluentTheme.of(context).typography.subtitle?.copyWith(
+              color: Colors.grey.withOpacity(0.5),
+            ),
           ),
           const SizedBox(height: 8),
           Text(
             'ابدأ بإنشاء قالب جديد لتصميم هويات الطلاب',
             style: FluentTheme.of(
               context,
-            ).typography.body?.copyWith(color: Colors.grey[100]),
+            ).typography.body?.copyWith(color: Colors.grey.withOpacity(0.6)),
           ),
           const SizedBox(height: 24),
           FilledButton(
@@ -179,9 +183,9 @@ class _TemplateManagementPageState extends State<TemplateManagementPage> {
                 child: Container(
                   width: double.infinity,
                   decoration: BoxDecoration(
-                    color: Colors.grey[10],
+                    color: Colors.grey.withOpacity(0.1),
                     borderRadius: BorderRadius.circular(8),
-                    border: Border.all(color: Colors.grey[50]),
+                    border: Border.all(color: Colors.grey.withOpacity(0.3)),
                   ),
                   child: Stack(
                     children: [
@@ -193,14 +197,14 @@ class _TemplateManagementPageState extends State<TemplateManagementPage> {
                             Icon(
                               FluentIcons.design,
                               size: 32,
-                              color: Colors.grey[100],
+                              color: Colors.grey.withOpacity(0.6),
                             ),
                             const SizedBox(height: 8),
                             Text(
                               '${template.width.toStringAsFixed(1)}×${template.height.toStringAsFixed(1)} سم',
                               style: TextStyle(
                                 fontSize: 10,
-                                color: Colors.grey[120],
+                                color: Colors.grey.withOpacity(0.5),
                               ),
                             ),
                           ],
@@ -284,16 +288,26 @@ class _TemplateManagementPageState extends State<TemplateManagementPage> {
 
               Row(
                 children: [
-                  Icon(FluentIcons.stack, size: 12, color: Colors.grey[120]),
+                  Icon(
+                    FluentIcons.stack,
+                    size: 12,
+                    color: Colors.grey.withOpacity(0.5),
+                  ),
                   const SizedBox(width: 4),
                   Text(
                     '${template.elements.length} عنصر',
-                    style: TextStyle(fontSize: 11, color: Colors.grey[120]),
+                    style: TextStyle(
+                      fontSize: 11,
+                      color: Colors.grey.withOpacity(0.5),
+                    ),
                   ),
                   const Spacer(),
                   Text(
                     _formatDate(template.updatedAt),
-                    style: TextStyle(fontSize: 10, color: Colors.grey[100]),
+                    style: TextStyle(
+                      fontSize: 10,
+                      color: Colors.grey.withOpacity(0.6),
+                    ),
                   ),
                 ],
               ),

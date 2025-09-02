@@ -232,16 +232,26 @@ class ElementsPanel extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(FluentIcons.stack, size: 48, color: Colors.grey[120]),
+            Icon(
+              FluentIcons.stack,
+              size: 48,
+              color: Colors.grey.withOpacity(0.5),
+            ),
             const SizedBox(height: 16),
             Text(
               'لا توجد عناصر',
-              style: TextStyle(color: Colors.grey[120], fontSize: 14),
+              style: TextStyle(
+                color: Colors.grey.withOpacity(0.5),
+                fontSize: 14,
+              ),
             ),
             const SizedBox(height: 8),
             Text(
               'أضف عنصر لبدء التصميم',
-              style: TextStyle(color: Colors.grey[100], fontSize: 12),
+              style: TextStyle(
+                color: Colors.grey.withOpacity(0.6),
+                fontSize: 12,
+              ),
             ),
           ],
         ),

@@ -44,7 +44,10 @@ class SchoolCard extends StatelessWidget {
             const SizedBox(height: 4),
             Text(
               school.nameEnglish,
-              style: TextStyle(fontSize: 14, color: Colors.grey[100]),
+              style: TextStyle(
+                fontSize: 14,
+                color: Colors.grey.withOpacity(0.6),
+              ),
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
             ),
