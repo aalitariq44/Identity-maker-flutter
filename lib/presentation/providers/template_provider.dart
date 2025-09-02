@@ -1,7 +1,10 @@
 import 'package:fluent_ui/fluent_ui.dart';
 import '../../data/models/template.dart';
+import '../../core/services/template_service.dart';
 
 class TemplateProvider extends ChangeNotifier {
+  final TemplateService _templateService = TemplateService();
+
   List<Template> _templates = [];
   Template? _selectedTemplate;
   bool _isLoading = false;
@@ -13,47 +16,17 @@ class TemplateProvider extends ChangeNotifier {
   bool get isLoading => _isLoading;
   String? get errorMessage => _errorMessage;
 
-  // Load templates (placeholder - will implement JSON loading later)
+  // Load templates using service
   Future<void> loadTemplates() async {
     try {
       _setLoading(true);
-      // TODO: Implement template loading from JSON files
-      _templates = _createDefaultTemplates();
+      _templates = await _templateService.loadTemplates();
       _clearError();
     } catch (e) {
       _setError('خطأ في تحميل القوالب: ${e.toString()}');
     } finally {
       _setLoading(false);
     }
-  }
-
-  // Create default templates
-  List<Template> _createDefaultTemplates() {
-    final now = DateTime.now();
-    return [
-      Template(
-        id: 1,
-        name: 'قالب أفقي كلاسيكي',
-        width: 8.5,
-        height: 5.4,
-        orientation: 'horizontal',
-        elements: [],
-        backgroundProperties: {'color': '#FFFFFF'},
-        createdAt: now,
-        updatedAt: now,
-      ),
-      Template(
-        id: 2,
-        name: 'قالب عمودي حديث',
-        width: 5.4,
-        height: 8.5,
-        orientation: 'vertical',
-        elements: [],
-        backgroundProperties: {'color': '#F8F9FA'},
-        createdAt: now,
-        updatedAt: now,
-      ),
-    ];
   }
 
   // Select template
@@ -66,17 +39,17 @@ class TemplateProvider extends ChangeNotifier {
   Future<bool> addTemplate(Template template) async {
     try {
       _setLoading(true);
-      final now = DateTime.now();
-      final templateToAdd = template.copyWith(
-        id: _getNextId(),
-        createdAt: now,
-        updatedAt: now,
-      );
+      final success = await _templateService.saveTemplate(template);
 
-      _templates.add(templateToAdd);
-      _clearError();
-      notifyListeners();
-      return true;
+      if (success) {
+        // Reload templates to get the updated list with IDs
+        await loadTemplates();
+        _clearError();
+        return true;
+      } else {
+        _setError('فشل في حفظ القالب');
+        return false;
+      }
     } catch (e) {
       _setError('خطأ في إضافة القالب: ${e.toString()}');
       return false;
@@ -90,19 +63,25 @@ class TemplateProvider extends ChangeNotifier {
     try {
       _setLoading(true);
       final updatedTemplate = template.copyWith(updatedAt: DateTime.now());
+      final success = await _templateService.saveTemplate(updatedTemplate);
 
-      final index = _templates.indexWhere((t) => t.id == template.id);
-      if (index != -1) {
-        _templates[index] = updatedTemplate;
+      if (success) {
+        final index = _templates.indexWhere((t) => t.id == template.id);
+        if (index != -1) {
+          _templates[index] = updatedTemplate;
+        }
+
+        if (_selectedTemplate?.id == template.id) {
+          _selectedTemplate = updatedTemplate;
+        }
+
+        _clearError();
+        notifyListeners();
+        return true;
+      } else {
+        _setError('فشل في تحديث القالب');
+        return false;
       }
-
-      if (_selectedTemplate?.id == template.id) {
-        _selectedTemplate = updatedTemplate;
-      }
-
-      _clearError();
-      notifyListeners();
-      return true;
     } catch (e) {
       _setError('خطأ في تحديث القالب: ${e.toString()}');
       return false;
@@ -115,15 +94,22 @@ class TemplateProvider extends ChangeNotifier {
   Future<bool> deleteTemplate(int templateId) async {
     try {
       _setLoading(true);
-      _templates.removeWhere((template) => template.id == templateId);
+      final success = await _templateService.deleteTemplate(templateId);
 
-      if (_selectedTemplate?.id == templateId) {
-        _selectedTemplate = null;
+      if (success) {
+        _templates.removeWhere((template) => template.id == templateId);
+
+        if (_selectedTemplate?.id == templateId) {
+          _selectedTemplate = null;
+        }
+
+        _clearError();
+        notifyListeners();
+        return true;
+      } else {
+        _setError('فشل في حذف القالب');
+        return false;
       }
-
-      _clearError();
-      notifyListeners();
-      return true;
     } catch (e) {
       _setError('خطأ في حذف القالب: ${e.toString()}');
       return false;
@@ -134,22 +120,69 @@ class TemplateProvider extends ChangeNotifier {
 
   // Search templates
   List<Template> searchTemplates(String query) {
-    if (query.isEmpty) return _templates;
-
-    return _templates.where((template) {
-      return template.name.toLowerCase().contains(query.toLowerCase());
-    }).toList();
+    return _templateService.searchTemplates(_templates, query);
   }
 
   // Filter by orientation
   List<Template> filterByOrientation(String orientation) {
-    return _templates.where((t) => t.orientation == orientation).toList();
+    return _templateService.filterByOrientation(_templates, orientation);
   }
 
-  // Get next available ID
-  int _getNextId() {
-    if (_templates.isEmpty) return 1;
-    return _templates.map((t) => t.id ?? 0).reduce((a, b) => a > b ? a : b) + 1;
+  // Export template
+  Future<bool> exportTemplate(Template template, String filePath) async {
+    try {
+      return await _templateService.exportTemplate(template, filePath);
+    } catch (e) {
+      _setError('خطأ في تصدير القالب: ${e.toString()}');
+      return false;
+    }
+  }
+
+  // Import template
+  Future<bool> importTemplate(String filePath) async {
+    try {
+      _setLoading(true);
+      final template = await _templateService.importTemplate(filePath);
+
+      if (template != null) {
+        final success = await _templateService.saveTemplate(template);
+        if (success) {
+          await loadTemplates();
+          _clearError();
+          return true;
+        }
+      }
+
+      _setError('فشل في استيراد القالب');
+      return false;
+    } catch (e) {
+      _setError('خطأ في استيراد القالب: ${e.toString()}');
+      return false;
+    } finally {
+      _setLoading(false);
+    }
+  }
+
+  // Clone template
+  Future<bool> cloneTemplate(Template template, {String? newName}) async {
+    try {
+      _setLoading(true);
+      final clonedTemplate = _templateService.cloneTemplate(
+        template,
+        newName: newName,
+      );
+      return await addTemplate(clonedTemplate);
+    } catch (e) {
+      _setError('خطأ في نسخ القالب: ${e.toString()}');
+      return false;
+    } finally {
+      _setLoading(false);
+    }
+  }
+
+  // Validate template
+  bool validateTemplate(Template template) {
+    return _templateService.validateTemplate(template);
   }
 
   // Private methods
