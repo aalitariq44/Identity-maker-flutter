@@ -1,5 +1,7 @@
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:provider/provider.dart';
+import 'package:image_picker/image_picker.dart';
+import 'dart:io';
 import '../../../data/models/student.dart';
 import '../../providers/student_provider.dart';
 import '../../providers/school_provider.dart';
@@ -207,19 +209,35 @@ class _AddStudentDialogState extends State<AddStudentDialog> {
   }
 
   Widget _buildPhotoPreview() {
-    return Container(
-      width: 60,
-      height: 60,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(30),
-        color: const Color(0xFFE3F2FD),
-      ),
-      child: const Icon(
-        FluentIcons.contact,
-        size: 30,
-        color: Color(0xFF1976D2),
-      ),
-    );
+    if (_photoPath != null &&
+        _photoPath!.isNotEmpty &&
+        File(_photoPath!).existsSync()) {
+      return Container(
+        width: 60,
+        height: 60,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(30),
+          image: DecorationImage(
+            image: FileImage(File(_photoPath!)),
+            fit: BoxFit.cover,
+          ),
+        ),
+      );
+    } else {
+      return Container(
+        width: 60,
+        height: 60,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(30),
+          color: const Color(0xFFE3F2FD),
+        ),
+        child: const Icon(
+          FluentIcons.contact,
+          size: 30,
+          color: Color(0xFF1976D2),
+        ),
+      );
+    }
   }
 
   Widget _buildPhotoPlaceholder() {
@@ -240,10 +258,45 @@ class _AddStudentDialogState extends State<AddStudentDialog> {
 
   Future<void> _selectPhoto() async {
     try {
-      // This is a simplified version. In a real app, you'd use image_picker
-      setState(() {
-        _photoPath = '/path/to/selected/photo.jpg'; // Placeholder
-      });
+      final ImagePicker picker = ImagePicker();
+
+      // Show options dialog
+      final source = await showDialog<ImageSource>(
+        context: context,
+        builder: (context) => ContentDialog(
+          title: const Text('اختر مصدر الصورة'),
+          content: const Text('كيف تريد اختيار الصورة؟'),
+          actions: [
+            Button(
+              onPressed: () => Navigator.of(context).pop(ImageSource.camera),
+              child: const Text('الكاميرا'),
+            ),
+            Button(
+              onPressed: () => Navigator.of(context).pop(ImageSource.gallery),
+              child: const Text('المعرض'),
+            ),
+            Button(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text('إلغاء'),
+            ),
+          ],
+        ),
+      );
+
+      if (source == null) return;
+
+      final XFile? image = await picker.pickImage(
+        source: source,
+        maxWidth: 800,
+        maxHeight: 800,
+        imageQuality: 85,
+      );
+
+      if (image != null) {
+        setState(() {
+          _photoPath = image.path;
+        });
+      }
     } catch (e) {
       _showErrorMessage('فشل في اختيار الصورة: $e');
     }
