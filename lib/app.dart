@@ -34,7 +34,9 @@ class IdentityMakerApp extends StatelessWidget {
               accentColor: AppColorSchemes.primaryAccent,
               scaffoldBackgroundColor: AppColors.background,
               cardColor: AppColors.surface,
-              typography: Typography.fromBrightness(brightness: Brightness.light),
+              typography: Typography.fromBrightness(
+                brightness: Brightness.light,
+              ),
             ),
             darkTheme: FluentThemeData(
               brightness: Brightness.dark,
@@ -43,10 +45,7 @@ class IdentityMakerApp extends StatelessWidget {
             home: const HomePage(),
             debugShowCheckedModeBanner: false,
             locale: localeProvider.locale,
-            supportedLocales: const [
-              Locale('ar', 'SA'),
-              Locale('en', 'US'),
-            ],
+            supportedLocales: const [Locale('ar', 'SA'), Locale('en', 'US')],
             localizationsDelegates: const [
               AppLocalizations.delegate,
               GlobalMaterialLocalizations.delegate,

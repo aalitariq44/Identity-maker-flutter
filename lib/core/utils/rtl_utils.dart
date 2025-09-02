@@ -20,7 +20,8 @@ class RtlUtils {
     }
   }
 
-  static EdgeInsetsGeometry getPadding(BuildContext context, {
+  static EdgeInsetsGeometry getPadding(
+    BuildContext context, {
     double start = 0,
     double top = 0,
     double end = 0,
@@ -28,29 +29,26 @@ class RtlUtils {
   }) {
     final isRtl = context.read<LocaleProvider>().isRtl;
     if (isRtl) {
-      return EdgeInsets.only(
-        left: end,
-        top: top,
-        right: start,
-        bottom: bottom,
-      );
+      return EdgeInsets.only(left: end, top: top, right: start, bottom: bottom);
     } else {
-      return EdgeInsets.only(
-        left: start,
-        top: top,
-        right: end,
-        bottom: bottom,
-      );
+      return EdgeInsets.only(left: start, top: top, right: end, bottom: bottom);
     }
   }
 
-  static EdgeInsetsGeometry getMargin(BuildContext context, {
+  static EdgeInsetsGeometry getMargin(
+    BuildContext context, {
     double start = 0,
     double top = 0,
     double end = 0,
     double bottom = 0,
   }) {
-    return getPadding(context, start: start, top: top, end: end, bottom: bottom);
+    return getPadding(
+      context,
+      start: start,
+      top: top,
+      end: end,
+      bottom: bottom,
+    );
   }
 
   static String getFontFamily(BuildContext context) {
@@ -58,7 +56,8 @@ class RtlUtils {
     return isRtl ? 'NotoSansArabic' : 'Roboto';
   }
 
-  static TextStyle getTextStyle(BuildContext context, {
+  static TextStyle getTextStyle(
+    BuildContext context, {
     double? fontSize,
     FontWeight? fontWeight,
     Color? color,
@@ -71,7 +70,10 @@ class RtlUtils {
     );
   }
 
-  static CrossAxisAlignment getCrossAxisAlignment(BuildContext context, {bool isStart = true}) {
+  static CrossAxisAlignment getCrossAxisAlignment(
+    BuildContext context, {
+    bool isStart = true,
+  }) {
     final isRtl = context.read<LocaleProvider>().isRtl;
     if (isStart) {
       return isRtl ? CrossAxisAlignment.end : CrossAxisAlignment.start;
@@ -80,7 +82,10 @@ class RtlUtils {
     }
   }
 
-  static MainAxisAlignment getMainAxisAlignment(BuildContext context, {bool isStart = true}) {
+  static MainAxisAlignment getMainAxisAlignment(
+    BuildContext context, {
+    bool isStart = true,
+  }) {
     final isRtl = context.read<LocaleProvider>().isRtl;
     if (isStart) {
       return isRtl ? MainAxisAlignment.end : MainAxisAlignment.start;

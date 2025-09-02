@@ -24,7 +24,7 @@ class LocalizedText extends StatelessWidget {
   Widget build(BuildContext context) {
     final localizations = AppLocalizations.of(context)!;
     final defaultStyle = RtlUtils.getTextStyle(context);
-    
+
     return Text(
       text(localizations),
       style: style ?? defaultStyle,
@@ -146,7 +146,7 @@ class RtlListTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isRtl = RtlUtils.isRtl(context);
-    
+
     return ListTile(
       leading: isRtl ? trailing : leading,
       title: title,
@@ -191,7 +191,7 @@ class RtlTextFormField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isRtl = RtlUtils.isRtl(context);
-    
+
     return TextFormBox(
       validator: validator,
       onSaved: onSaved,

@@ -23,7 +23,7 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     final localizations = AppLocalizations.of(context)!;
-    
+
     return Consumer<AppProvider>(
       builder: (context, appProvider, child) {
         return FluentApp(

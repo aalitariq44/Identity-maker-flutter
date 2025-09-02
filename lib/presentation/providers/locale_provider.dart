@@ -16,7 +16,7 @@ class LocaleProvider extends ChangeNotifier {
     final prefs = await SharedPreferences.getInstance();
     final languageCode = prefs.getString('language_code') ?? 'ar';
     final countryCode = prefs.getString('country_code') ?? 'SA';
-    
+
     _locale = Locale(languageCode, countryCode);
     _isRtl = languageCode == 'ar';
     notifyListeners();
@@ -24,14 +24,14 @@ class LocaleProvider extends ChangeNotifier {
 
   void setLocale(Locale locale) async {
     if (_locale == locale) return;
-    
+
     _locale = locale;
     _isRtl = locale.languageCode == 'ar';
-    
+
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString('language_code', locale.languageCode);
     await prefs.setString('country_code', locale.countryCode ?? '');
-    
+
     notifyListeners();
   }
 
@@ -43,5 +43,6 @@ class LocaleProvider extends ChangeNotifier {
     }
   }
 
-  TextDirection get textDirection => _isRtl ? TextDirection.rtl : TextDirection.ltr;
+  TextDirection get textDirection =>
+      _isRtl ? TextDirection.rtl : TextDirection.ltr;
 }
