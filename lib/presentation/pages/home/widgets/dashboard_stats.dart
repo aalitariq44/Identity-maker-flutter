@@ -20,7 +20,10 @@ class _DashboardStatsState extends State<DashboardStats> {
   @override
   void initState() {
     super.initState();
-    _loadData();
+    // Load data after the current build is complete
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _loadData();
+    });
   }
 
   void _loadData() {

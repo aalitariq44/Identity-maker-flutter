@@ -16,6 +16,13 @@ class SchoolProvider extends ChangeNotifier {
   bool get isLoading => _isLoading;
   String? get errorMessage => _errorMessage;
 
+  // Safe notify listeners to avoid calling during build
+  void _safeNotifyListeners() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      notifyListeners();
+    });
+  }
+
   // Load all schools
   Future<void> loadSchools() async {
     try {
@@ -42,7 +49,7 @@ class SchoolProvider extends ChangeNotifier {
 
       _schools.add(newSchool);
       _clearError();
-      notifyListeners();
+      _safeNotifyListeners();
       return true;
     } catch (e) {
       _setError('خطأ في إضافة المدرسة: ${e.toString()}');
@@ -70,7 +77,7 @@ class SchoolProvider extends ChangeNotifier {
       }
 
       _clearError();
-      notifyListeners();
+      _safeNotifyListeners();
       return true;
     } catch (e) {
       _setError('خطأ في تحديث المدرسة: ${e.toString()}');
@@ -93,7 +100,7 @@ class SchoolProvider extends ChangeNotifier {
       }
 
       _clearError();
-      notifyListeners();
+      _safeNotifyListeners();
       return true;
     } catch (e) {
       _setError('خطأ في حذف المدرسة: ${e.toString()}');
@@ -120,7 +127,7 @@ class SchoolProvider extends ChangeNotifier {
   // Select school
   void selectSchool(School? school) {
     _selectedSchool = school;
-    notifyListeners();
+    _safeNotifyListeners();
   }
 
   // Search schools
@@ -137,17 +144,17 @@ class SchoolProvider extends ChangeNotifier {
   // Private methods
   void _setLoading(bool loading) {
     _isLoading = loading;
-    notifyListeners();
+    _safeNotifyListeners();
   }
 
   void _setError(String error) {
     _errorMessage = error;
-    notifyListeners();
+    _safeNotifyListeners();
   }
 
   void _clearError() {
     _errorMessage = null;
-    notifyListeners();
+    _safeNotifyListeners();
   }
 
   // Clear all data (for logout or reset)
@@ -156,6 +163,6 @@ class SchoolProvider extends ChangeNotifier {
     _selectedSchool = null;
     _errorMessage = null;
     _isLoading = false;
-    notifyListeners();
+    _safeNotifyListeners();
   }
 }

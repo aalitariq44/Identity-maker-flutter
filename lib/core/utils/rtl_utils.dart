@@ -4,19 +4,29 @@ import '../../presentation/providers/locale_provider.dart';
 
 class RtlUtils {
   static bool isRtl(BuildContext context) {
-    return context.read<LocaleProvider>().isRtl;
+    try {
+      return context.watch<LocaleProvider>().isRtl;
+    } catch (e) {
+      // fallback if provider is not available
+      return Directionality.of(context) == TextDirection.rtl;
+    }
   }
 
   static TextDirection getTextDirection(BuildContext context) {
-    return context.read<LocaleProvider>().textDirection;
+    try {
+      return context.watch<LocaleProvider>().textDirection;
+    } catch (e) {
+      // fallback if provider is not available
+      return Directionality.of(context);
+    }
   }
 
   static Alignment getAlignment(BuildContext context, {bool isStart = true}) {
-    final isRtl = context.read<LocaleProvider>().isRtl;
+    final isRtlDirection = isRtl(context);
     if (isStart) {
-      return isRtl ? Alignment.centerRight : Alignment.centerLeft;
+      return isRtlDirection ? Alignment.centerRight : Alignment.centerLeft;
     } else {
-      return isRtl ? Alignment.centerLeft : Alignment.centerRight;
+      return isRtlDirection ? Alignment.centerLeft : Alignment.centerRight;
     }
   }
 
@@ -27,8 +37,8 @@ class RtlUtils {
     double end = 0,
     double bottom = 0,
   }) {
-    final isRtl = context.read<LocaleProvider>().isRtl;
-    if (isRtl) {
+    final isRtlDirection = isRtl(context);
+    if (isRtlDirection) {
       return EdgeInsets.only(left: end, top: top, right: start, bottom: bottom);
     } else {
       return EdgeInsets.only(left: start, top: top, right: end, bottom: bottom);
@@ -52,8 +62,8 @@ class RtlUtils {
   }
 
   static String getFontFamily(BuildContext context) {
-    final isRtl = context.read<LocaleProvider>().isRtl;
-    return isRtl ? 'NotoSansArabic' : 'Roboto';
+    final isRtlDirection = isRtl(context);
+    return isRtlDirection ? 'NotoSansArabic' : 'Roboto';
   }
 
   static TextStyle getTextStyle(
@@ -74,11 +84,11 @@ class RtlUtils {
     BuildContext context, {
     bool isStart = true,
   }) {
-    final isRtl = context.read<LocaleProvider>().isRtl;
+    final isRtlDirection = isRtl(context);
     if (isStart) {
-      return isRtl ? CrossAxisAlignment.end : CrossAxisAlignment.start;
+      return isRtlDirection ? CrossAxisAlignment.end : CrossAxisAlignment.start;
     } else {
-      return isRtl ? CrossAxisAlignment.start : CrossAxisAlignment.end;
+      return isRtlDirection ? CrossAxisAlignment.start : CrossAxisAlignment.end;
     }
   }
 
@@ -86,20 +96,20 @@ class RtlUtils {
     BuildContext context, {
     bool isStart = true,
   }) {
-    final isRtl = context.read<LocaleProvider>().isRtl;
+    final isRtlDirection = isRtl(context);
     if (isStart) {
-      return isRtl ? MainAxisAlignment.end : MainAxisAlignment.start;
+      return isRtlDirection ? MainAxisAlignment.end : MainAxisAlignment.start;
     } else {
-      return isRtl ? MainAxisAlignment.start : MainAxisAlignment.end;
+      return isRtlDirection ? MainAxisAlignment.start : MainAxisAlignment.end;
     }
   }
 
   static TextAlign getTextAlign(BuildContext context, {bool isStart = true}) {
-    final isRtl = context.read<LocaleProvider>().isRtl;
+    final isRtlDirection = isRtl(context);
     if (isStart) {
-      return isRtl ? TextAlign.right : TextAlign.left;
+      return isRtlDirection ? TextAlign.right : TextAlign.left;
     } else {
-      return isRtl ? TextAlign.left : TextAlign.right;
+      return isRtlDirection ? TextAlign.left : TextAlign.right;
     }
   }
 }

@@ -20,7 +20,10 @@ class LocalizedText extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final localizations = AppLocalizations.of(context)!;
+    final localizations = AppLocalizations.of(context);
+    if (localizations == null) {
+      return const SizedBox.shrink(); // or some error widget
+    }
     final defaultStyle = RtlUtils.getTextStyle(context);
 
     return Text(

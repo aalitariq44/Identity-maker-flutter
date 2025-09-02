@@ -27,6 +27,11 @@ class IdentityMakerApp extends StatelessWidget {
       ],
       child: Consumer<LocaleProvider>(
         builder: (context, localeProvider, child) {
+          // Get the appropriate font family based on locale
+          final fontFamily = localeProvider.locale.languageCode == 'ar'
+              ? 'NotoSansArabic'
+              : 'Roboto';
+
           return FluentApp(
             title: 'مصمم هويات الطلاب',
             theme: FluentThemeData(
@@ -34,13 +39,30 @@ class IdentityMakerApp extends StatelessWidget {
               accentColor: AppColorSchemes.primaryAccent,
               scaffoldBackgroundColor: AppColors.background,
               cardColor: AppColors.surface,
-              typography: Typography.fromBrightness(
-                brightness: Brightness.light,
+              fontFamily: fontFamily,
+              typography: Typography.raw(
+                display: TextStyle(fontFamily: fontFamily),
+                titleLarge: TextStyle(fontFamily: fontFamily),
+                title: TextStyle(fontFamily: fontFamily),
+                subtitle: TextStyle(fontFamily: fontFamily),
+                bodyLarge: TextStyle(fontFamily: fontFamily),
+                body: TextStyle(fontFamily: fontFamily),
+                caption: TextStyle(fontFamily: fontFamily),
               ),
             ),
             darkTheme: FluentThemeData(
               brightness: Brightness.dark,
               accentColor: AppColorSchemes.primaryAccent,
+              fontFamily: fontFamily,
+              typography: Typography.raw(
+                display: TextStyle(fontFamily: fontFamily),
+                titleLarge: TextStyle(fontFamily: fontFamily),
+                title: TextStyle(fontFamily: fontFamily),
+                subtitle: TextStyle(fontFamily: fontFamily),
+                bodyLarge: TextStyle(fontFamily: fontFamily),
+                body: TextStyle(fontFamily: fontFamily),
+                caption: TextStyle(fontFamily: fontFamily),
+              ),
             ),
             home: const HomePage(),
             debugShowCheckedModeBanner: false,
@@ -57,6 +79,16 @@ class IdentityMakerApp extends StatelessWidget {
                 textDirection: localeProvider.textDirection,
                 child: child!,
               );
+            },
+            localeResolutionCallback: (locale, supportedLocales) {
+              if (locale != null) {
+                for (var supportedLocale in supportedLocales) {
+                  if (supportedLocale.languageCode == locale.languageCode) {
+                    return supportedLocale;
+                  }
+                }
+              }
+              return supportedLocales.first;
             },
           );
         },
