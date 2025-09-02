@@ -1,8 +1,6 @@
 import 'package:fluent_ui/fluent_ui.dart';
-import 'package:provider/provider.dart';
 import '../../../core/utils/app_localizations.dart';
 import '../../../core/utils/rtl_utils.dart';
-import '../../providers/locale_provider.dart';
 
 class LocalizedText extends StatelessWidget {
   final String Function(AppLocalizations) text;
@@ -152,8 +150,8 @@ class RtlListTile extends StatelessWidget {
       title: title,
       subtitle: subtitle,
       trailing: isRtl ? leading : trailing,
-      onTap: onTap,
-      contentPadding: contentPadding,
+      onPressed: onTap,
+      contentPadding: contentPadding ?? EdgeInsets.zero,
     );
   }
 }
