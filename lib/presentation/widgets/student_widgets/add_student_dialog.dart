@@ -324,12 +324,12 @@ class _AddStudentDialogState extends State<AddStudentDialog> {
       showDialog(
         context: context,
         builder: (context) => ContentDialog(
-          title: const Text('خطأ'),
-          content: Text(message),
+          title: const Text('خطأ', style: TextStyle(color: Colors.black)),
+          content: Text(message, style: TextStyle(color: Colors.black)),
           actions: [
             FilledButton(
               onPressed: () => Navigator.of(context).pop(),
-              child: const Text('موافق'),
+              child: const Text('موافق', style: TextStyle(color: Colors.white)),
             ),
           ],
         ),
