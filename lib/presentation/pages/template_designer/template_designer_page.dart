@@ -268,7 +268,10 @@ class TemplateDesignerHeader extends StatelessWidget {
             ),
             CommandBarButton(
               icon: const Icon(FluentIcons.delete),
-              label: Text('حذف العنصر المحدد', style: TextStyle(color: Colors.black)),
+              label: Text(
+                'حذف العنصر المحدد',
+                style: TextStyle(color: Colors.black),
+              ),
               onPressed: provider.selectedElement != null
                   ? () => provider.deleteSelectedElement()
                   : null,
@@ -292,11 +295,14 @@ class TemplateDesignerHeader extends StatelessWidget {
       showDialog(
         context: context,
         builder: (context) => ContentDialog(
-          title: const Text('تم الحفظ'),
-          content: const Text('تم حفظ القالب بنجاح'),
+          title: Text('تم الحفظ', style: TextStyle(color: Colors.black)),
+          content: Text(
+            'تم حفظ القالب بنجاح',
+            style: TextStyle(color: Colors.black),
+          ),
           actions: [
             Button(
-              child: const Text('موافق'),
+              child: Text('موافق', style: TextStyle(color: Colors.black)),
               onPressed: () => Navigator.of(context).pop(),
             ),
           ],
@@ -313,11 +319,14 @@ class TemplateDesignerHeader extends StatelessWidget {
     showDialog(
       context: context,
       builder: (context) => ContentDialog(
-        title: const Text('معاينة'),
-        content: const Text('سيتم تنفيذ ميزة المعاينة قريباً'),
+        title: Text('معاينة', style: TextStyle(color: Colors.black)),
+        content: Text(
+          'سيتم تنفيذ ميزة المعاينة قريباً',
+          style: TextStyle(color: Colors.black),
+        ),
         actions: [
           Button(
-            child: const Text('موافق'),
+            child: Text('موافق', style: TextStyle(color: Colors.black)),
             onPressed: () => Navigator.of(context).pop(),
           ),
         ],
@@ -333,11 +342,14 @@ class TemplateDesignerHeader extends StatelessWidget {
     showDialog(
       context: context,
       builder: (context) => ContentDialog(
-        title: const Text('استيراد'),
-        content: const Text('سيتم تنفيذ ميزة الاستيراد قريباً'),
+        title: Text('استيراد', style: TextStyle(color: Colors.black)),
+        content: Text(
+          'سيتم تنفيذ ميزة الاستيراد قريباً',
+          style: TextStyle(color: Colors.black),
+        ),
         actions: [
           Button(
-            child: const Text('موافق'),
+            child: Text('موافق', style: TextStyle(color: Colors.black)),
             onPressed: () => Navigator.of(context).pop(),
           ),
         ],
@@ -353,11 +365,14 @@ class TemplateDesignerHeader extends StatelessWidget {
     showDialog(
       context: context,
       builder: (context) => ContentDialog(
-        title: const Text('تصدير'),
-        content: const Text('سيتم تنفيذ ميزة التصدير قريباً'),
+        title: Text('تصدير', style: TextStyle(color: Colors.black)),
+        content: Text(
+          'سيتم تنفيذ ميزة التصدير قريباً',
+          style: TextStyle(color: Colors.black),
+        ),
         actions: [
           Button(
-            child: const Text('موافق'),
+            child: Text('موافق', style: TextStyle(color: Colors.black)),
             onPressed: () => Navigator.of(context).pop(),
           ),
         ],

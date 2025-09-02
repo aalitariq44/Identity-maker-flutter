@@ -358,15 +358,18 @@ class DesignerToolbar extends StatelessWidget {
     showDialog(
       context: context,
       builder: (context) => ContentDialog(
-        title: Text('مسح جميع العناصر'),
-        content: Text('هل أنت متأكد من مسح جميع العناصر من القالب؟'),
+        title: Text('مسح جميع العناصر', style: TextStyle(color: Colors.black)),
+        content: Text(
+          'هل أنت متأكد من مسح جميع العناصر من القالب؟',
+          style: TextStyle(color: Colors.black),
+        ),
         actions: [
           Button(
-            child: Text('إلغاء'),
+            child: Text('إلغاء', style: TextStyle(color: Colors.black)),
             onPressed: () => Navigator.of(context).pop(),
           ),
           FilledButton(
-            child: Text('مسح'),
+            child: Text('مسح', style: TextStyle(color: Colors.black)),
             onPressed: () {
               provider.clearAll();
               Navigator.of(context).pop();
