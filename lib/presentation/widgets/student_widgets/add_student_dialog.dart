@@ -1,6 +1,7 @@
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:provider/provider.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:file_picker/file_picker.dart';
 import 'dart:io';
 import '../../../data/models/student.dart';
 import '../../providers/student_provider.dart';
@@ -258,44 +259,59 @@ class _AddStudentDialogState extends State<AddStudentDialog> {
 
   Future<void> _selectPhoto() async {
     try {
-      final ImagePicker picker = ImagePicker();
+      if (Platform.isWindows) {
+        // Use file_picker for Windows
+        FilePickerResult? result = await FilePicker.platform.pickFiles(
+          type: FileType.image,
+          allowMultiple: false,
+        );
 
-      // Show options dialog
-      final source = await showDialog<ImageSource>(
-        context: context,
-        builder: (context) => ContentDialog(
-          title: const Text('اختر مصدر الصورة'),
-          content: const Text('كيف تريد اختيار الصورة؟'),
-          actions: [
-            Button(
-              onPressed: () => Navigator.of(context).pop(ImageSource.camera),
-              child: const Text('الكاميرا'),
-            ),
-            Button(
-              onPressed: () => Navigator.of(context).pop(ImageSource.gallery),
-              child: const Text('المعرض'),
-            ),
-            Button(
-              onPressed: () => Navigator.of(context).pop(),
-              child: const Text('إلغاء'),
-            ),
-          ],
-        ),
-      );
+        if (result != null && result.files.isNotEmpty) {
+          setState(() {
+            _photoPath = result.files.first.path;
+          });
+        }
+      } else {
+        // Use image_picker for mobile platforms
+        final ImagePicker picker = ImagePicker();
 
-      if (source == null) return;
+        // Show options dialog
+        final source = await showDialog<ImageSource>(
+          context: context,
+          builder: (context) => ContentDialog(
+            title: const Text('اختر مصدر الصورة'),
+            content: const Text('كيف تريد اختيار الصورة؟'),
+            actions: [
+              Button(
+                onPressed: () => Navigator.of(context).pop(ImageSource.camera),
+                child: const Text('الكاميرا'),
+              ),
+              Button(
+                onPressed: () => Navigator.of(context).pop(ImageSource.gallery),
+                child: const Text('المعرض'),
+              ),
+              Button(
+                onPressed: () => Navigator.of(context).pop(),
+                child: const Text('إلغاء'),
+              ),
+            ],
+          ),
+        );
 
-      final XFile? image = await picker.pickImage(
-        source: source,
-        maxWidth: 800,
-        maxHeight: 800,
-        imageQuality: 85,
-      );
+        if (source == null) return;
 
-      if (image != null) {
-        setState(() {
-          _photoPath = image.path;
-        });
+        final XFile? image = await picker.pickImage(
+          source: source,
+          maxWidth: 800,
+          maxHeight: 800,
+          imageQuality: 85,
+        );
+
+        if (image != null) {
+          setState(() {
+            _photoPath = image.path;
+          });
+        }
       }
     } catch (e) {
       _showErrorMessage('فشل في اختيار الصورة: $e');
