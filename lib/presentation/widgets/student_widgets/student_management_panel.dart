@@ -64,7 +64,11 @@ class _StudentManagementPanelState extends State<StudentManagementPanel> {
             // Title
             const Text(
               'إدارة الطلاب',
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+              style: TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+                color: Colors.black,
+              ),
             ),
             const Spacer(),
 

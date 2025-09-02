@@ -35,7 +35,12 @@ class _StudentsManagementPageState extends State<StudentsManagementPage> {
   Widget build(BuildContext context) {
     return NavigationView(
       content: ScaffoldPage(
-        header: const PageHeader(title: Text('إدارة الطلاب والمدارس')),
+        header: PageHeader(
+          title: Text(
+            'إدارة الطلاب والمدارس',
+            style: TextStyle(color: Colors.black),
+          ),
+        ),
         content: Row(
           children: [
             // Navigation Panel
@@ -110,7 +115,7 @@ class _StudentsManagementPageState extends State<StudentsManagementPage> {
             Text(
               title,
               style: TextStyle(
-                color: isSelected ? Colors.white : const Color(0xFF323130),
+                color: isSelected ? Colors.white : Colors.black,
                 fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
               ),
             ),

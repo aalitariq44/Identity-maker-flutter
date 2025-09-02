@@ -57,7 +57,11 @@ class _SchoolManagementPanelState extends State<SchoolManagementPanel> {
         // Title
         const Text(
           'إدارة المدارس',
-          style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+          style: TextStyle(
+            fontSize: 24,
+            fontWeight: FontWeight.bold,
+            color: Colors.black,
+          ),
         ),
         const Spacer(),
 
