@@ -1,0 +1,128 @@
+{
+  "id": 1,
+  "name": "قالب أفقي كلاسيكي",
+  "width": 8.5,
+  "height": 5.4,
+  "orientation": "horizontal",
+  "backgroundProperties": {
+    "color": "#FFFFFF",
+    "image": null,
+    "opacity": 1.0
+  },
+  "elements": [
+    {
+      "id": "school_logo",
+      "type": "image",
+      "x": 0.5,
+      "y": 0.5,
+      "width": 2.0,
+      "height": 2.0,
+      "zIndex": 1,
+      "properties": {
+        "source": "school_logo",
+        "fit": "contain"
+      }
+    },
+    {
+      "id": "school_name_ar",
+      "type": "text",
+      "x": 3.0,
+      "y": 0.5,
+      "width": 4.0,
+      "height": 0.8,
+      "zIndex": 2,
+      "properties": {
+        "text": "{school_name_arabic}",
+        "fontSize": 16,
+        "fontFamily": "NotoSansArabic",
+        "fontWeight": "bold",
+        "color": "#000000",
+        "textAlign": "center"
+      }
+    },
+    {
+      "id": "school_name_en",
+      "type": "text",
+      "x": 3.0,
+      "y": 1.4,
+      "width": 4.0,
+      "height": 0.6,
+      "zIndex": 2,
+      "properties": {
+        "text": "{school_name_english}",
+        "fontSize": 12,
+        "fontFamily": "Roboto",
+        "fontWeight": "normal",
+        "color": "#666666",
+        "textAlign": "center"
+      }
+    },
+    {
+      "id": "student_photo",
+      "type": "image",
+      "x": 0.5,
+      "y": 3.0,
+      "width": 1.5,
+      "height": 2.0,
+      "zIndex": 1,
+      "properties": {
+        "source": "student_photo",
+        "fit": "cover",
+        "borderRadius": 8
+      }
+    },
+    {
+      "id": "student_name",
+      "type": "text",
+      "x": 2.5,
+      "y": 3.0,
+      "width": 5.0,
+      "height": 0.8,
+      "zIndex": 2,
+      "properties": {
+        "text": "الاسم: {student_name}",
+        "fontSize": 14,
+        "fontFamily": "NotoSansArabic",
+        "fontWeight": "bold",
+        "color": "#000000",
+        "textAlign": "right"
+      }
+    },
+    {
+      "id": "student_grade",
+      "type": "text",
+      "x": 2.5,
+      "y": 3.9,
+      "width": 5.0,
+      "height": 0.6,
+      "zIndex": 2,
+      "properties": {
+        "text": "الصف: {student_grade}",
+        "fontSize": 12,
+        "fontFamily": "NotoSansArabic",
+        "fontWeight": "normal",
+        "color": "#333333",
+        "textAlign": "right"
+      }
+    },
+    {
+      "id": "student_birth_date",
+      "type": "text",
+      "x": 2.5,
+      "y": 4.6,
+      "width": 5.0,
+      "height": 0.6,
+      "zIndex": 2,
+      "properties": {
+        "text": "تاريخ الميلاد: {student_birth_date}",
+        "fontSize": 10,
+        "fontFamily": "NotoSansArabic",
+        "fontWeight": "normal",
+        "color": "#666666",
+        "textAlign": "right"
+      }
+    }
+  ],
+  "createdAt": "2024-01-01T00:00:00.000Z",
+  "updatedAt": "2024-01-01T00:00:00.000Z"
+}

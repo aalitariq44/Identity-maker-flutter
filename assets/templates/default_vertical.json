@@ -1,0 +1,142 @@
+{
+  "id": 2,
+  "name": "قالب عمودي حديث",
+  "width": 5.4,
+  "height": 8.5,
+  "orientation": "vertical",
+  "backgroundProperties": {
+    "color": "#F8F9FA",
+    "image": null,
+    "opacity": 1.0
+  },
+  "elements": [
+    {
+      "id": "header_background",
+      "type": "shape",
+      "x": 0,
+      "y": 0,
+      "width": 5.4,
+      "height": 2.5,
+      "zIndex": 0,
+      "properties": {
+        "shape": "rectangle",
+        "color": "#2C3E50",
+        "borderRadius": 0
+      }
+    },
+    {
+      "id": "school_logo",
+      "type": "image",
+      "x": 1.7,
+      "y": 0.3,
+      "width": 1.0,
+      "height": 1.0,
+      "zIndex": 1,
+      "properties": {
+        "source": "school_logo",
+        "fit": "contain"
+      }
+    },
+    {
+      "id": "school_name_ar",
+      "type": "text",
+      "x": 0.2,
+      "y": 1.4,
+      "width": 5.0,
+      "height": 0.6,
+      "zIndex": 2,
+      "properties": {
+        "text": "{school_name_arabic}",
+        "fontSize": 14,
+        "fontFamily": "NotoSansArabic",
+        "fontWeight": "bold",
+        "color": "#FFFFFF",
+        "textAlign": "center"
+      }
+    },
+    {
+      "id": "school_name_en",
+      "type": "text",
+      "x": 0.2,
+      "y": 2.0,
+      "width": 5.0,
+      "height": 0.4,
+      "zIndex": 2,
+      "properties": {
+        "text": "{school_name_english}",
+        "fontSize": 10,
+        "fontFamily": "Roboto",
+        "fontWeight": "normal",
+        "color": "#ECF0F1",
+        "textAlign": "center"
+      }
+    },
+    {
+      "id": "student_photo",
+      "type": "image",
+      "x": 1.2,
+      "y": 3.0,
+      "width": 3.0,
+      "height": 3.5,
+      "zIndex": 1,
+      "properties": {
+        "source": "student_photo",
+        "fit": "cover",
+        "borderRadius": 12
+      }
+    },
+    {
+      "id": "student_name",
+      "type": "text",
+      "x": 0.2,
+      "y": 6.8,
+      "width": 5.0,
+      "height": 0.6,
+      "zIndex": 2,
+      "properties": {
+        "text": "{student_name}",
+        "fontSize": 16,
+        "fontFamily": "NotoSansArabic",
+        "fontWeight": "bold",
+        "color": "#2C3E50",
+        "textAlign": "center"
+      }
+    },
+    {
+      "id": "student_grade",
+      "type": "text",
+      "x": 0.2,
+      "y": 7.5,
+      "width": 2.4,
+      "height": 0.5,
+      "zIndex": 2,
+      "properties": {
+        "text": "الصف: {student_grade}",
+        "fontSize": 12,
+        "fontFamily": "NotoSansArabic",
+        "fontWeight": "normal",
+        "color": "#34495E",
+        "textAlign": "center"
+      }
+    },
+    {
+      "id": "student_birth_date",
+      "type": "text",
+      "x": 2.8,
+      "y": 7.5,
+      "width": 2.4,
+      "height": 0.5,
+      "zIndex": 2,
+      "properties": {
+        "text": "{student_birth_date}",
+        "fontSize": 10,
+        "fontFamily": "NotoSansArabic",
+        "fontWeight": "normal",
+        "color": "#7F8C8D",
+        "textAlign": "center"
+      }
+    }
+  ],
+  "createdAt": "2024-01-01T00:00:00.000Z",
+  "updatedAt": "2024-01-01T00:00:00.000Z"
+}
