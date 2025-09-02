@@ -223,7 +223,7 @@ class TemplateDesignerHeader extends StatelessWidget {
                   Tooltip(message: 'حفظ القالب', child: w),
               wrappedItem: CommandBarButton(
                 icon: const Icon(FluentIcons.save),
-                label: const Text('حفظ'),
+                label: Text('حفظ', style: TextStyle(color: Colors.black)),
                 onPressed: () => _saveTemplate(context, provider),
               ),
             ),
@@ -232,7 +232,7 @@ class TemplateDesignerHeader extends StatelessWidget {
                   Tooltip(message: 'معاينة الهوية', child: w),
               wrappedItem: CommandBarButton(
                 icon: const Icon(FluentIcons.view),
-                label: const Text('معاينة'),
+                label: Text('معاينة', style: TextStyle(color: Colors.black)),
                 onPressed: () => _previewTemplate(context, provider),
               ),
             ),
@@ -241,7 +241,7 @@ class TemplateDesignerHeader extends StatelessWidget {
                   Tooltip(message: 'استيراد قالب', child: w),
               wrappedItem: CommandBarButton(
                 icon: const Icon(FluentIcons.open_file),
-                label: const Text('استيراد'),
+                label: Text('استيراد', style: TextStyle(color: Colors.black)),
                 onPressed: () => _importTemplate(context, provider),
               ),
             ),
@@ -250,7 +250,7 @@ class TemplateDesignerHeader extends StatelessWidget {
                   Tooltip(message: 'تصدير القالب', child: w),
               wrappedItem: CommandBarButton(
                 icon: const Icon(FluentIcons.download),
-                label: const Text('تصدير'),
+                label: Text('تصدير', style: TextStyle(color: Colors.black)),
                 onPressed: () => _exportTemplate(context, provider),
               ),
             ),
@@ -258,17 +258,17 @@ class TemplateDesignerHeader extends StatelessWidget {
           secondaryItems: [
             CommandBarButton(
               icon: const Icon(FluentIcons.undo),
-              label: const Text('تراجع'),
+              label: Text('تراجع', style: TextStyle(color: Colors.black)),
               onPressed: provider.canUndo ? () => provider.undo() : null,
             ),
             CommandBarButton(
               icon: const Icon(FluentIcons.redo),
-              label: const Text('إعادة'),
+              label: Text('إعادة', style: TextStyle(color: Colors.black)),
               onPressed: provider.canRedo ? () => provider.redo() : null,
             ),
             CommandBarButton(
               icon: const Icon(FluentIcons.delete),
-              label: const Text('حذف العنصر المحدد'),
+              label: Text('حذف العنصر المحدد', style: TextStyle(color: Colors.black)),
               onPressed: provider.selectedElement != null
                   ? () => provider.deleteSelectedElement()
                   : null,
