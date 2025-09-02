@@ -25,7 +25,7 @@ class TemplateDesignerPage extends StatelessWidget {
             header: const TemplateDesignerHeader(),
             content: Row(
               children: [
-                // Left Panel - Elements and Properties
+                // Left Panel - Elements
                 Container(
                   width: 300,
                   decoration: BoxDecoration(
@@ -44,10 +44,7 @@ class TemplateDesignerPage extends StatelessWidget {
                       _buildTemplateSettings(context, designerProvider),
                       const Divider(),
                       // Elements Panel
-                      Expanded(flex: 2, child: const ElementsPanel()),
-                      const Divider(),
-                      // Properties Panel
-                      Expanded(flex: 3, child: const PropertiesPanel()),
+                      Expanded(child: const ElementsPanel()),
                     ],
                   ),
                 ),
@@ -64,6 +61,21 @@ class TemplateDesignerPage extends StatelessWidget {
                       ],
                     ),
                   ),
+                ),
+                // Right Panel - Properties
+                Container(
+                  width: 300,
+                  decoration: BoxDecoration(
+                    color: FluentTheme.of(context).cardColor,
+                    border: Border(
+                      left: BorderSide(
+                        color: FluentTheme.of(
+                          context,
+                        ).resources.cardStrokeColorDefault,
+                      ),
+                    ),
+                  ),
+                  child: const PropertiesPanel(),
                 ),
               ],
             ),
