@@ -1,6 +1,7 @@
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter/gestures.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter/services.dart';
 import '../../providers/template_designer_provider.dart';
 import '../../../data/models/template.dart';
 
@@ -13,6 +14,7 @@ class DesignerCanvas extends StatefulWidget {
 
 class _DesignerCanvasState extends State<DesignerCanvas> {
   static const double _cmToPx = 37.795; // 1 cm = 37.795 pixels at 96 DPI
+  final FocusNode _focusNode = FocusNode();
 
   @override
   Widget build(BuildContext context) {
@@ -29,54 +31,68 @@ class _DesignerCanvasState extends State<DesignerCanvas> {
               _handleScroll(provider, pointerSignal);
             }
           },
-          child: GestureDetector(
-            onTapDown: (details) => _handleCanvasTap(provider, details),
-            onPanUpdate: (details) => _handleCanvasPan(provider, details),
-            child: Container(
-              width: double.infinity,
-              height: double.infinity,
-              color: const Color(0xFFE0E0E0),
-              child: Center(
-                child: Transform.translate(
-                  offset: provider.canvasOffset,
-                  child: Transform.scale(
-                    scale: provider.canvasZoom,
-                    child: Container(
-                      width: canvasWidth / provider.canvasZoom,
-                      height: canvasHeight / provider.canvasZoom,
-                      decoration: BoxDecoration(
-                        color: _getBackgroundColor(
-                          provider.backgroundProperties,
-                        ),
-                        border: Border.all(
-                          color: const Color(0xFFE0E0E0),
-                          width: 1,
-                        ),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withOpacity(0.2),
-                            blurRadius: 10,
-                            offset: const Offset(2, 2),
+          child: RawKeyboardListener(
+            focusNode: _focusNode,
+            onKey: (RawKeyEvent event) {
+              if (event is RawKeyDownEvent &&
+                  event.logicalKey == LogicalKeyboardKey.delete) {
+                if (provider.selectedElement != null) {
+                  provider.deleteSelectedElement();
+                }
+              }
+            },
+            child: GestureDetector(
+              onTapDown: (details) {
+                _focusNode.requestFocus();
+                _handleCanvasTap(provider, details);
+              },
+              onPanUpdate: (details) => _handleCanvasPan(provider, details),
+              child: Container(
+                width: double.infinity,
+                height: double.infinity,
+                color: const Color(0xFFE0E0E0),
+                child: Center(
+                  child: Transform.translate(
+                    offset: provider.canvasOffset,
+                    child: Transform.scale(
+                      scale: provider.canvasZoom,
+                      child: Container(
+                        width: canvasWidth / provider.canvasZoom,
+                        height: canvasHeight / provider.canvasZoom,
+                        decoration: BoxDecoration(
+                          color: _getBackgroundColor(
+                            provider.backgroundProperties,
                           ),
-                        ],
-                      ),
-                      child: Stack(
-                        children: [
-                          // Background
-                          _buildBackground(provider),
-                          // Grid overlay
-                          if (provider.canvasZoom > 0.5) _buildGrid(provider),
-                          // Template elements
-                          ...provider.elements.map(
-                            (element) => _buildElement(provider, element),
+                          border: Border.all(
+                            color: const Color(0xFFE0E0E0),
+                            width: 1,
                           ),
-                          // Selection overlay
-                          if (provider.selectedElement != null)
-                            _buildSelectionOverlay(
-                              provider,
-                              provider.selectedElement!,
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.2),
+                              blurRadius: 10,
+                              offset: const Offset(2, 2),
                             ),
-                        ],
+                          ],
+                        ),
+                        child: Stack(
+                          children: [
+                            // Background
+                            _buildBackground(provider),
+                            // Grid overlay
+                            if (provider.canvasZoom > 0.5) _buildGrid(provider),
+                            // Template elements
+                            ...provider.elements.map(
+                              (element) => _buildElement(provider, element),
+                            ),
+                            // Selection overlay
+                            if (provider.selectedElement != null)
+                              _buildSelectionOverlay(
+                                provider,
+                                provider.selectedElement!,
+                              ),
+                          ],
+                        ),
                       ),
                     ),
                   ),
@@ -87,6 +103,12 @@ class _DesignerCanvasState extends State<DesignerCanvas> {
         );
       },
     );
+  }
+
+  @override
+  void dispose() {
+    _focusNode.dispose();
+    super.dispose();
   }
 
   void _handleScroll(
