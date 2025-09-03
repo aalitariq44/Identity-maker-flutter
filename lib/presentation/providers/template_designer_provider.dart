@@ -23,6 +23,11 @@ class TemplateDesignerProvider extends ChangeNotifier {
   double _canvasZoom = 1.0;
   Offset _canvasOffset = Offset.zero;
 
+  // Grid properties
+  bool _showGrid = true;
+  double _gridSpacing = 0.5; // cm
+  Color _gridColor = const Color.fromRGBO(128, 128, 128, 0.3);
+
   // History for undo/redo
   List<List<TemplateElement>> _history = [];
   int _historyIndex = -1;
@@ -40,6 +45,11 @@ class TemplateDesignerProvider extends ChangeNotifier {
   Offset get canvasOffset => _canvasOffset;
   bool get canUndo => _historyIndex > 0;
   bool get canRedo => _historyIndex < _history.length - 1;
+
+  // Grid getters
+  bool get showGrid => _showGrid;
+  double get gridSpacing => _gridSpacing;
+  Color get gridColor => _gridColor;
 
   TemplateDesignerProvider() {
     templateNameController = TextEditingController(text: 'قالب جديد');
@@ -246,6 +256,22 @@ class TemplateDesignerProvider extends ChangeNotifier {
   void resetCanvasView() {
     _canvasZoom = 1.0;
     _canvasOffset = Offset.zero;
+    notifyListeners();
+  }
+
+  // Grid methods
+  void setShowGrid(bool show) {
+    _showGrid = show;
+    notifyListeners();
+  }
+
+  void setGridSpacing(double spacing) {
+    _gridSpacing = math.max(0.1, math.min(2.0, spacing));
+    notifyListeners();
+  }
+
+  void setGridColor(Color color) {
+    _gridColor = color;
     notifyListeners();
   }
 
