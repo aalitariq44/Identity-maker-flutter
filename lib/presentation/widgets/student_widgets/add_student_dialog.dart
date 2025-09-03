@@ -23,7 +23,7 @@ class _AddStudentDialogState extends State<AddStudentDialog> {
   DateTime? _birthDate;
   int? _selectedSchoolId;
   String? _photoPath;
-  Uint8List? _photoBytes;  // For web compatibility
+  Uint8List? _photoBytes; // For web compatibility
   String? _selectedGrade;
   bool _isLoading = false;
 
@@ -232,7 +232,9 @@ class _AddStudentDialogState extends State<AddStudentDialog> {
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(30),
           image: DecorationImage(
-            image: NetworkImage(_photoPath!),  // Use NetworkImage for compatibility
+            image: NetworkImage(
+              _photoPath!,
+            ), // Use NetworkImage for compatibility
             fit: BoxFit.cover,
           ),
         ),

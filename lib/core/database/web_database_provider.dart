@@ -10,16 +10,18 @@ class WebDatabaseProvider {
   Future<int> insertSchool(Map<String, dynamic> school) async {
     final prefs = await SharedPreferences.getInstance();
     final schools = await getSchools();
-    
+
     // Generate new ID
     int newId = 1;
     if (schools.isNotEmpty) {
-      newId = schools.map((s) => s['id'] as int).reduce((a, b) => a > b ? a : b) + 1;
+      newId =
+          schools.map((s) => s['id'] as int).reduce((a, b) => a > b ? a : b) +
+          1;
     }
-    
+
     school['id'] = newId;
     schools.add(school);
-    
+
     await prefs.setString('schools', jsonEncode(schools));
     return newId;
   }
@@ -28,7 +30,7 @@ class WebDatabaseProvider {
     final prefs = await SharedPreferences.getInstance();
     final schoolsJson = prefs.getString('schools');
     if (schoolsJson == null) return [];
-    
+
     final List<dynamic> schoolsList = jsonDecode(schoolsJson);
     return schoolsList.cast<Map<String, dynamic>>();
   }
@@ -45,7 +47,7 @@ class WebDatabaseProvider {
   Future<int> updateSchool(int id, Map<String, dynamic> school) async {
     final prefs = await SharedPreferences.getInstance();
     final schools = await getSchools();
-    
+
     final index = schools.indexWhere((s) => s['id'] == id);
     if (index != -1) {
       school['id'] = id;
@@ -59,7 +61,7 @@ class WebDatabaseProvider {
   Future<int> deleteSchool(int id) async {
     final prefs = await SharedPreferences.getInstance();
     final schools = await getSchools();
-    
+
     schools.removeWhere((school) => school['id'] == id);
     await prefs.setString('schools', jsonEncode(schools));
     return 1;
@@ -69,16 +71,18 @@ class WebDatabaseProvider {
   Future<int> insertStudent(Map<String, dynamic> student) async {
     final prefs = await SharedPreferences.getInstance();
     final students = await getStudents();
-    
+
     // Generate new ID
     int newId = 1;
     if (students.isNotEmpty) {
-      newId = students.map((s) => s['id'] as int).reduce((a, b) => a > b ? a : b) + 1;
+      newId =
+          students.map((s) => s['id'] as int).reduce((a, b) => a > b ? a : b) +
+          1;
     }
-    
+
     student['id'] = newId;
     students.add(student);
-    
+
     await prefs.setString('students', jsonEncode(students));
     return newId;
   }
@@ -87,7 +91,7 @@ class WebDatabaseProvider {
     final prefs = await SharedPreferences.getInstance();
     final studentsJson = prefs.getString('students');
     if (studentsJson == null) return [];
-    
+
     final List<dynamic> studentsList = jsonDecode(studentsJson);
     return studentsList.cast<Map<String, dynamic>>();
   }
@@ -95,7 +99,7 @@ class WebDatabaseProvider {
   Future<List<Map<String, dynamic>>> getStudentsWithSchoolInfo() async {
     final students = await getStudents();
     final schools = await getSchools();
-    
+
     return students.map((student) {
       final school = schools.firstWhere(
         (s) => s['id'] == student['school_id'],
@@ -111,13 +115,15 @@ class WebDatabaseProvider {
 
   Future<List<Map<String, dynamic>>> getStudentsBySchool(int schoolId) async {
     final students = await getStudents();
-    return students.where((student) => student['school_id'] == schoolId).toList();
+    return students
+        .where((student) => student['school_id'] == schoolId)
+        .toList();
   }
 
   Future<int> updateStudent(int id, Map<String, dynamic> student) async {
     final prefs = await SharedPreferences.getInstance();
     final students = await getStudents();
-    
+
     final index = students.indexWhere((s) => s['id'] == id);
     if (index != -1) {
       student['id'] = id;
@@ -131,7 +137,7 @@ class WebDatabaseProvider {
   Future<int> deleteStudent(int id) async {
     final prefs = await SharedPreferences.getInstance();
     final students = await getStudents();
-    
+
     students.removeWhere((student) => student['id'] == id);
     await prefs.setString('students', jsonEncode(students));
     return 1;

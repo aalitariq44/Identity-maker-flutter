@@ -234,11 +234,7 @@ class DatabaseProvider {
 
   Future<void> deleteSetting(String key) async {
     final db = await database;
-    await db.delete(
-      'settings',
-      where: 'key = ?',
-      whereArgs: [key],
-    );
+    await db.delete('settings', where: 'key = ?', whereArgs: [key]);
   }
 
   Future<void> close() async {
