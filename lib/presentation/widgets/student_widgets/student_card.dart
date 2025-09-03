@@ -1,5 +1,7 @@
 import 'package:fluent_ui/fluent_ui.dart';
 import 'dart:io';
+import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import '../../../data/models/student.dart';
 
 class StudentCard extends StatelessWidget {
@@ -138,15 +140,39 @@ class StudentCard extends StatelessWidget {
 
   Widget _buildPhoto() {
     if (student.photoPath != null && student.photoPath!.isNotEmpty) {
+      ImageProvider imageProvider;
+      if (kIsWeb && student.photoPath!.startsWith('data:image')) {
+        final base64Data = student.photoPath!.split(',')[1];
+        final bytes = base64Decode(base64Data);
+        imageProvider = MemoryImage(bytes);
+      } else if (kIsWeb &&
+          (student.photoPath!.startsWith('http') ||
+              student.photoPath!.startsWith('https'))) {
+        imageProvider = NetworkImage(student.photoPath!);
+      } else if (!kIsWeb) {
+        imageProvider = FileImage(File(student.photoPath!));
+      } else {
+        // غير مدعوم
+        return Container(
+          width: 50,
+          height: 50,
+          decoration: BoxDecoration(
+            color: const Color(0xFFE3F2FD),
+            borderRadius: BorderRadius.circular(25),
+          ),
+          child: const Icon(
+            FluentIcons.contact,
+            color: Color(0xFF1976D2),
+            size: 24,
+          ),
+        );
+      }
       return Container(
         width: 50,
         height: 50,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(25),
-          image: DecorationImage(
-            image: FileImage(File(student.photoPath!)),
-            fit: BoxFit.cover,
-          ),
+          image: DecorationImage(image: imageProvider, fit: BoxFit.cover),
         ),
       );
     } else {

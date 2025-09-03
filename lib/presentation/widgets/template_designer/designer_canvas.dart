@@ -4,6 +4,8 @@ import 'package:provider/provider.dart';
 import 'package:flutter/services.dart';
 import 'dart:io';
 import 'dart:math' as math;
+import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import '../../providers/template_designer_provider.dart';
 import '../../../data/models/template.dart';
 import '../../../core/constants/image_fit_constants.dart';
@@ -18,7 +20,6 @@ class DesignerCanvas extends StatefulWidget {
 class _DesignerCanvasState extends State<DesignerCanvas> {
   static const double _cmToPx = 37.795; // 1 cm = 37.795 pixels at 96 DPI
   final FocusNode _focusNode = FocusNode();
-  double _initialRotation = 0.0;
 
   @override
   Widget build(BuildContext context) {
@@ -203,7 +204,7 @@ class _DesignerCanvasState extends State<DesignerCanvas> {
     if (image != null && image != 'none') {
       Widget imageWidget;
 
-      if (imageType == 'custom' && File(image).existsSync()) {
+      if (imageType == 'custom' && !kIsWeb && File(image).existsSync()) {
         // عرض الصورة المخصصة من الكمبيوتر
         imageWidget = Container(
           width: double.infinity,
@@ -211,6 +212,36 @@ class _DesignerCanvasState extends State<DesignerCanvas> {
           decoration: BoxDecoration(
             image: DecorationImage(
               image: FileImage(File(image)),
+              fit: ImageFitConstants.getBoxFitFromString(imageFit),
+            ),
+          ),
+        );
+      } else if (imageType == 'custom' &&
+          kIsWeb &&
+          image.startsWith('data:image')) {
+        // عرض الصورة من base64 في الويب
+        final base64Data = image.split(',')[1];
+        final bytes = base64Decode(base64Data);
+        imageWidget = Container(
+          width: double.infinity,
+          height: double.infinity,
+          decoration: BoxDecoration(
+            image: DecorationImage(
+              image: MemoryImage(bytes),
+              fit: ImageFitConstants.getBoxFitFromString(imageFit),
+            ),
+          ),
+        );
+      } else if (imageType == 'custom' &&
+          kIsWeb &&
+          (image.startsWith('http') || image.startsWith('https'))) {
+        // عرض الصورة من URL في الويب
+        imageWidget = Container(
+          width: double.infinity,
+          height: double.infinity,
+          decoration: BoxDecoration(
+            image: DecorationImage(
+              image: NetworkImage(image),
               fit: ImageFitConstants.getBoxFitFromString(imageFit),
             ),
           ),
@@ -385,13 +416,41 @@ class _DesignerCanvasState extends State<DesignerCanvas> {
 
     Widget imageWidget;
 
-    if (imageType == 'custom' && File(source).existsSync()) {
+    if (imageType == 'custom' && !kIsWeb && File(source).existsSync()) {
       // عرض الصورة المخصصة من الكمبيوتر
       imageWidget = Container(
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(borderRadius),
           image: DecorationImage(
             image: FileImage(File(source)),
+            fit: ImageFitConstants.getBoxFitFromString(fit),
+          ),
+        ),
+      );
+    } else if (imageType == 'custom' &&
+        kIsWeb &&
+        source.startsWith('data:image')) {
+      // عرض الصورة من base64 في الويب
+      final base64Data = source.split(',')[1];
+      final bytes = base64Decode(base64Data);
+      imageWidget = Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(borderRadius),
+          image: DecorationImage(
+            image: MemoryImage(bytes),
+            fit: ImageFitConstants.getBoxFitFromString(fit),
+          ),
+        ),
+      );
+    } else if (imageType == 'custom' &&
+        kIsWeb &&
+        (source.startsWith('http') || source.startsWith('https'))) {
+      // عرض الصورة من URL في الويب
+      imageWidget = Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(borderRadius),
+          image: DecorationImage(
+            image: NetworkImage(source),
             fit: ImageFitConstants.getBoxFitFromString(fit),
           ),
         ),
@@ -639,7 +698,6 @@ class _DesignerCanvasState extends State<DesignerCanvas> {
       child: GestureDetector(
         onPanStart: (details) {
           // Store initial rotation for relative rotation calculation
-          _initialRotation = element.rotation;
         },
         onPanUpdate: (details) {
           // Calculate rotation based on drag direction relative to element center

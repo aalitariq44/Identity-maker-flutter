@@ -1,5 +1,7 @@
 import 'package:fluent_ui/fluent_ui.dart';
 import 'dart:io';
+import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import '../../../data/models/school.dart';
 
 class SchoolCard extends StatelessWidget {
@@ -127,15 +129,39 @@ class SchoolCard extends StatelessWidget {
 
   Widget _buildLogo() {
     if (school.logoPath != null && school.logoPath!.isNotEmpty) {
+      ImageProvider imageProvider;
+      if (kIsWeb && school.logoPath!.startsWith('data:image')) {
+        final base64Data = school.logoPath!.split(',')[1];
+        final bytes = base64Decode(base64Data);
+        imageProvider = MemoryImage(bytes);
+      } else if (kIsWeb &&
+          (school.logoPath!.startsWith('http') ||
+              school.logoPath!.startsWith('https'))) {
+        imageProvider = NetworkImage(school.logoPath!);
+      } else if (!kIsWeb) {
+        imageProvider = FileImage(File(school.logoPath!));
+      } else {
+        // غير مدعوم
+        return Container(
+          width: 40,
+          height: 40,
+          decoration: BoxDecoration(
+            color: const Color(0xFFE3F2FD),
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: const Icon(
+            FluentIcons.education,
+            color: Color(0xFF1976D2),
+            size: 20,
+          ),
+        );
+      }
       return Container(
         width: 40,
         height: 40,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(8),
-          image: DecorationImage(
-            image: FileImage(File(school.logoPath!)),
-            fit: BoxFit.cover,
-          ),
+          image: DecorationImage(image: imageProvider, fit: BoxFit.cover),
         ),
       );
     } else {

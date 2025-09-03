@@ -2,6 +2,7 @@ import 'dart:io';
 import 'dart:convert';
 import 'package:flutter/services.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:flutter/foundation.dart';
 import '../../data/models/template.dart';
 
 class TemplateService {
@@ -9,30 +10,36 @@ class TemplateService {
   static const String _defaultTemplatesPath = 'assets/templates/';
 
   // Get templates directory
-  Future<Directory> _getTemplatesDirectory() async {
-    final appDir = await getApplicationDocumentsDirectory();
-    final templatesDir = Directory('${appDir.path}/templates');
-    if (!await templatesDir.exists()) {
-      await templatesDir.create(recursive: true);
+  Future<Directory?> _getTemplatesDirectory() async {
+    if (kIsWeb) {
+      // في الويب، لا يوجد دليل محلي، أعد null
+      return null;
+    } else {
+      final appDir = await getApplicationDocumentsDirectory();
+      final templatesDir = Directory('${appDir.path}/templates');
+      if (!await templatesDir.exists()) {
+        await templatesDir.create(recursive: true);
+      }
+      return templatesDir;
     }
-    return templatesDir;
   }
 
   // Load templates from file
   Future<List<Template>> loadTemplates() async {
     try {
       final templatesDir = await _getTemplatesDirectory();
-      final templatesFile = File('${templatesDir.path}/$_templatesFileName');
+      if (templatesDir != null) {
+        final templatesFile = File('${templatesDir.path}/$_templatesFileName');
 
-      if (await templatesFile.exists()) {
-        // Load from user templates file
-        final content = await templatesFile.readAsString();
-        final List<dynamic> jsonList = json.decode(content);
-        return jsonList.map((json) => Template.fromJson(json)).toList();
-      } else {
-        // Load default templates
-        return await _loadDefaultTemplates();
+        if (await templatesFile.exists()) {
+          // Load from user templates file
+          final content = await templatesFile.readAsString();
+          final List<dynamic> jsonList = json.decode(content);
+          return jsonList.map((json) => Template.fromJson(json)).toList();
+        }
       }
+      // Load default templates
+      return await _loadDefaultTemplates();
     } catch (e) {
       print('Error loading templates: $e');
       return await _loadDefaultTemplates();
@@ -146,6 +153,10 @@ class TemplateService {
   Future<bool> saveTemplates(List<Template> templates) async {
     try {
       final templatesDir = await _getTemplatesDirectory();
+      if (templatesDir == null) {
+        // في الويب، لا نحفظ محليًا
+        return true;
+      }
       final templatesFile = File('${templatesDir.path}/$_templatesFileName');
 
       final jsonList = templates.map((template) => template.toJson()).toList();
@@ -202,6 +213,10 @@ class TemplateService {
 
   // Export template to JSON file
   Future<bool> exportTemplate(Template template, String filePath) async {
+    if (kIsWeb) {
+      // في الويب، لا يمكن التصدير إلى ملف
+      return false;
+    }
     try {
       final file = File(filePath);
       final jsonContent = json.encode(template.toJson());
@@ -215,6 +230,10 @@ class TemplateService {
 
   // Import template from JSON file
   Future<Template?> importTemplate(String filePath) async {
+    if (kIsWeb) {
+      // في الويب، لا يمكن الاستيراد من ملف
+      return null;
+    }
     try {
       final file = File(filePath);
       if (!await file.exists()) return null;

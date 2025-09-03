@@ -1,6 +1,8 @@
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:provider/provider.dart';
 import 'dart:io';
+import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import '../../../data/models/school.dart';
 import '../../providers/school_provider.dart';
 
@@ -168,15 +170,38 @@ class _AddSchoolDialogState extends State<AddSchoolDialog> {
   }
 
   Widget _buildLogoPreview() {
+    ImageProvider imageProvider;
+    if (kIsWeb && _logoPath!.startsWith('data:image')) {
+      final base64Data = _logoPath!.split(',')[1];
+      final bytes = base64Decode(base64Data);
+      imageProvider = MemoryImage(bytes);
+    } else if (kIsWeb &&
+        (_logoPath!.startsWith('http') || _logoPath!.startsWith('https'))) {
+      imageProvider = NetworkImage(_logoPath!);
+    } else if (!kIsWeb) {
+      imageProvider = FileImage(File(_logoPath!));
+    } else {
+      // غير مدعوم
+      return Container(
+        width: 60,
+        height: 60,
+        decoration: BoxDecoration(
+          color: const Color(0xFFF5F5F5),
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: const Icon(
+          FluentIcons.add_friend,
+          size: 30,
+          color: Color(0xFF999999),
+        ),
+      );
+    }
     return Container(
       width: 60,
       height: 60,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(8),
-        image: DecorationImage(
-          image: FileImage(File(_logoPath!)),
-          fit: BoxFit.cover,
-        ),
+        image: DecorationImage(image: imageProvider, fit: BoxFit.cover),
       ),
     );
   }
