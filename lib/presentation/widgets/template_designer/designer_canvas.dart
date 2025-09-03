@@ -122,8 +122,41 @@ class _DesignerCanvasState extends State<DesignerCanvas> {
     TemplateDesignerProvider provider,
     TapDownDetails details,
   ) {
-    // No selection logic - just focus the canvas
     _focusNode.requestFocus();
+
+    // Convert tap position to template coordinates (in cm)
+    final tapX =
+        (details.localPosition.dx - provider.canvasOffset.dx) /
+        (provider.canvasZoom * _cmToPx);
+    final tapY =
+        (details.localPosition.dy - provider.canvasOffset.dy) /
+        (provider.canvasZoom * _cmToPx);
+
+    // Check if tap is within template bounds
+    if (tapX >= 0 &&
+        tapX <= provider.templateWidth &&
+        tapY >= 0 &&
+        tapY <= provider.templateHeight) {
+      // Check if tap is on any element
+      TemplateElement? tappedElement;
+      for (final element in provider.elements) {
+        if (tapX >= element.x &&
+            tapX <= element.x + element.width &&
+            tapY >= element.y &&
+            tapY <= element.y + element.height) {
+          tappedElement = element;
+          break;
+        }
+      }
+
+      if (tappedElement != null) {
+        provider.selectElement(tappedElement);
+      } else {
+        provider.selectElement(null);
+      }
+    } else {
+      provider.selectElement(null);
+    }
   }
 
   void _handleCanvasPan(
@@ -226,18 +259,30 @@ class _DesignerCanvasState extends State<DesignerCanvas> {
     TemplateDesignerProvider provider,
     TemplateElement element,
   ) {
+    final isSelected = provider.selectedElement?.id == element.id;
+
     return Positioned(
       left: element.x * _cmToPx,
       top: element.y * _cmToPx,
       width: element.width * _cmToPx,
       height: element.height * _cmToPx,
       child: GestureDetector(
+        onTapDown: (_) {}, // Prevent event from bubbling to parent
+        onTap: () => provider.selectElement(element),
+        onPanStart: (_) => provider.selectElement(
+          element,
+        ), // Ensure element is selected when dragging starts
         onPanUpdate: (details) {
           final deltaX = details.delta.dx / _cmToPx;
           final deltaY = details.delta.dy / _cmToPx;
           provider.moveElement(element.id, deltaX, deltaY);
         },
-        child: _buildElementContent(element),
+        child: Container(
+          decoration: isSelected
+              ? BoxDecoration(border: Border.all(color: Colors.red, width: 2.0))
+              : null,
+          child: _buildElementContent(element),
+        ),
       ),
     );
   }
