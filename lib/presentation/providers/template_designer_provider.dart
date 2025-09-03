@@ -8,11 +8,16 @@ class TemplateDesignerProvider extends ChangeNotifier {
   double _templateWidth = 8.56; // Default credit card size
   double _templateHeight = 5.398;
   String _templateOrientation = 'horizontal';
-  Map<String, dynamic> _backgroundProperties = {'color': '#FFFFFF'};
+  Map<String, dynamic> _backgroundProperties = {
+    'color': '#FFFFFF',
+    'image': null,
+    'opacity': 1.0,
+  };
 
   // Elements
   List<TemplateElement> _elements = [];
   TemplateElement? _selectedElement;
+  bool _isBackgroundSelected = false;
 
   // Canvas properties
   double _canvasZoom = 1.0;
@@ -30,6 +35,7 @@ class TemplateDesignerProvider extends ChangeNotifier {
   Map<String, dynamic> get backgroundProperties => _backgroundProperties;
   List<TemplateElement> get elements => _elements;
   TemplateElement? get selectedElement => _selectedElement;
+  bool get isBackgroundSelected => _isBackgroundSelected;
   double get canvasZoom => _canvasZoom;
   Offset get canvasOffset => _canvasOffset;
   bool get canUndo => _historyIndex > 0;
@@ -95,6 +101,15 @@ class TemplateDesignerProvider extends ChangeNotifier {
 
   void selectElement(TemplateElement? element) {
     _selectedElement = element;
+    _isBackgroundSelected = false; // إلغاء تحديد الخلفية عند تحديد عنصر
+    notifyListeners();
+  }
+
+  void selectBackground(bool selected) {
+    _isBackgroundSelected = selected;
+    if (selected) {
+      _selectedElement = null; // إلغاء تحديد العنصر عند تحديد الخلفية
+    }
     notifyListeners();
   }
 

@@ -91,6 +91,9 @@ class _DesignerCanvasState extends State<DesignerCanvas> {
                                 provider,
                                 provider.selectedElement!,
                               ),
+                            // Background selection overlay
+                            if (provider.isBackgroundSelected)
+                              _buildBackgroundSelectionOverlay(provider),
                           ],
                         ),
                       ),
@@ -138,7 +141,12 @@ class _DesignerCanvasState extends State<DesignerCanvas> {
       }
     }
 
-    provider.selectElement(clickedElement);
+    if (clickedElement != null) {
+      provider.selectElement(clickedElement);
+    } else {
+      // No element clicked, select background
+      provider.selectBackground(true);
+    }
   }
 
   void _handleCanvasPan(
@@ -182,11 +190,35 @@ class _DesignerCanvasState extends State<DesignerCanvas> {
   }
 
   Widget _buildBackground(TemplateDesignerProvider provider) {
-    return Container(
+    final properties = provider.backgroundProperties;
+    final color = _getBackgroundColor(properties);
+    final opacity = (properties['opacity'] as num?)?.toDouble() ?? 1.0;
+    final image = properties['image'] as String?;
+
+    Widget backgroundWidget = Container(
       width: double.infinity,
       height: double.infinity,
-      color: _getBackgroundColor(provider.backgroundProperties),
+      color: color.withOpacity(opacity),
     );
+
+    if (image != null && image != 'none') {
+      // TODO: Add image background support
+      // For now, just show a placeholder
+      backgroundWidget = Container(
+        width: double.infinity,
+        height: double.infinity,
+        color: color.withOpacity(opacity),
+        child: Center(
+          child: Icon(
+            FluentIcons.photo2,
+            color: Colors.grey.withOpacity(0.3),
+            size: 48,
+          ),
+        ),
+      );
+    }
+
+    return backgroundWidget;
   }
 
   Widget _buildGrid(TemplateDesignerProvider provider) {
@@ -383,6 +415,26 @@ class _DesignerCanvasState extends State<DesignerCanvas> {
             // Resize handles
             ..._buildResizeHandles(provider, element),
           ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildBackgroundSelectionOverlay(TemplateDesignerProvider provider) {
+    return Positioned.fill(
+      child: Container(
+        decoration: BoxDecoration(
+          border: Border.all(color: const Color(0xFF4CAF50), width: 3),
+        ),
+        child: const Center(
+          child: Text(
+            'خلفية محددة',
+            style: TextStyle(
+              color: Color(0xFF4CAF50),
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
         ),
       ),
     );

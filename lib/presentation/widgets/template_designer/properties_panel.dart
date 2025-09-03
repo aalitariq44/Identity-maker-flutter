@@ -28,6 +28,8 @@ class PropertiesPanel extends StatelessWidget {
                         provider,
                         provider.selectedElement!,
                       )
+                    : provider.isBackgroundSelected
+                    ? _buildBackgroundProperties(provider)
                     : _buildNoSelection(),
               ),
             ],
@@ -56,6 +58,153 @@ class PropertiesPanel extends StatelessWidget {
           Text(
             'اختر عنصراً لتعديل خصائصه',
             style: TextStyle(color: Colors.grey.withOpacity(0.6), fontSize: 12),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildBackgroundProperties(TemplateDesignerProvider provider) {
+    final properties = provider.backgroundProperties;
+
+    return SingleChildScrollView(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Background Info
+          Card(
+            child: Padding(
+              padding: const EdgeInsets.all(12),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'خصائص الخلفية',
+                    style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    'يمكنك تعديل لون الخلفية، إضافة صورة، وضبط الشفافية',
+                    style: TextStyle(fontSize: 12, color: Colors.grey),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          const SizedBox(height: 16),
+
+          // Background Color
+          Card(
+            child: Padding(
+              padding: const EdgeInsets.all(12),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'لون الخلفية',
+                    style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13),
+                  ),
+                  const SizedBox(height: 12),
+                  InfoLabel(
+                    label: 'اللون',
+                    child: _buildColorPicker(
+                      properties['color'] as String? ?? '#FFFFFF',
+                      (color) =>
+                          _updateBackgroundProperty(provider, 'color', color),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          const SizedBox(height: 16),
+
+          // Background Image
+          Card(
+            child: Padding(
+              padding: const EdgeInsets.all(12),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'صورة الخلفية',
+                    style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13),
+                  ),
+                  const SizedBox(height: 12),
+                  InfoLabel(
+                    label: 'مصدر الصورة',
+                    child: ComboBox<String>(
+                      value: properties['image'] as String? ?? 'none',
+                      items: const [
+                        ComboBoxItem(value: 'none', child: Text('بدون صورة')),
+                        ComboBoxItem(
+                          value: 'custom',
+                          child: Text('صورة مخصصة'),
+                        ),
+                      ],
+                      onChanged: (value) {
+                        if (value != null) {
+                          _updateBackgroundProperty(
+                            provider,
+                            'image',
+                            value == 'none' ? null : value,
+                          );
+                        }
+                      },
+                    ),
+                  ),
+                  if (properties['image'] != null) ...[
+                    const SizedBox(height: 12),
+                    Button(
+                      onPressed: () {
+                        // TODO: Implement image picker
+                      },
+                      child: const Text('اختر صورة'),
+                    ),
+                  ],
+                ],
+              ),
+            ),
+          ),
+          const SizedBox(height: 16),
+
+          // Opacity
+          Card(
+            child: Padding(
+              padding: const EdgeInsets.all(12),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'الشفافية',
+                    style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13),
+                  ),
+                  const SizedBox(height: 12),
+                  InfoLabel(
+                    label: 'درجة الشفافية (%)',
+                    child: NumberBox<double>(
+                      value:
+                          ((properties['opacity'] as num?)?.toDouble() ?? 1.0) *
+                          100,
+                      onChanged: (value) {
+                        if (value != null) {
+                          _updateBackgroundProperty(
+                            provider,
+                            'opacity',
+                            value / 100,
+                          );
+                        }
+                      },
+                      min: 0.0,
+                      max: 100.0,
+                      smallChange: 1.0,
+                      largeChange: 10.0,
+                      mode: SpinButtonPlacementMode.inline,
+                    ),
+                  ),
+                ],
+              ),
+            ),
           ),
         ],
       ),
@@ -702,6 +851,18 @@ class PropertiesPanel extends StatelessWidget {
 
     final updatedElement = element.copyWith(properties: updatedProperties);
     provider.updateSelectedElement(updatedElement);
+  }
+
+  void _updateBackgroundProperty(
+    TemplateDesignerProvider provider,
+    String property,
+    dynamic value,
+  ) {
+    final updatedProperties = Map<String, dynamic>.from(
+      provider.backgroundProperties,
+    );
+    updatedProperties[property] = value;
+    provider.updateBackgroundProperties(updatedProperties);
   }
 
   String _getElementTypeDisplayName(String type) {
