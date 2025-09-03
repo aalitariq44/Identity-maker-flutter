@@ -22,6 +22,33 @@ class TemplateDesignerPage extends StatefulWidget {
 class _TemplateDesignerPageState extends State<TemplateDesignerPage> {
   int _currentTabIndex = 0;
 
+  Future<void> _confirmExit(BuildContext context) async {
+    final result = await showDialog<bool>(
+      context: context,
+      builder: (context) => ContentDialog(
+        title: Text('تأكيد الخروج', style: TextStyle(color: Colors.black)),
+        content: Text(
+          'هل تريد الخروج من صانع القوالب؟ سيتم فقدان التغييرات غير المحفوظة.',
+          style: TextStyle(color: Colors.black),
+        ),
+        actions: [
+          Button(
+            child: Text('إلغاء', style: TextStyle(color: Colors.black)),
+            onPressed: () => Navigator.of(context).pop(false),
+          ),
+          FilledButton(
+            child: Text('خروج'),
+            onPressed: () => Navigator.of(context).pop(true),
+          ),
+        ],
+      ),
+    );
+
+    if (result == true && context.mounted) {
+      Navigator.of(context).pop();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
@@ -29,181 +56,273 @@ class _TemplateDesignerPageState extends State<TemplateDesignerPage> {
           TemplateDesignerProvider()..loadTemplate(widget.initialTemplate),
       child: Consumer<TemplateDesignerProvider>(
         builder: (context, designerProvider, child) {
-          return ScaffoldPage(
-            header: const TemplateDesignerHeader(),
-            content: Row(
-              children: [
-                // Left Panel - Elements
-                Container(
-                  width: 300,
-                  decoration: BoxDecoration(
-                    color: FluentTheme.of(context).cardColor,
-                    border: Border(
-                      right: BorderSide(
-                        color: FluentTheme.of(
-                          context,
-                        ).resources.cardStrokeColorDefault,
-                      ),
+          return PopScope(
+            canPop: false,
+            onPopInvokedWithResult: (didPop, result) async {
+              if (!didPop) {
+                final shouldPop = await showDialog<bool>(
+                  context: context,
+                  builder: (context) => ContentDialog(
+                    title: Text(
+                      'تأكيد الخروج',
+                      style: TextStyle(color: Colors.black),
                     ),
+                    content: Text(
+                      'هل تريد الخروج من صانع القوالب؟ سيتم فقدان التغييرات غير المحفوظة.',
+                      style: TextStyle(color: Colors.black),
+                    ),
+                    actions: [
+                      Button(
+                        child: Text(
+                          'إلغاء',
+                          style: TextStyle(color: Colors.black),
+                        ),
+                        onPressed: () => Navigator.of(context).pop(false),
+                      ),
+                      FilledButton(
+                        child: Text('خروج'),
+                        onPressed: () => Navigator.of(context).pop(true),
+                      ),
+                    ],
                   ),
-                  child: Column(
-                    children: [
-                      // Tab Buttons
-                      Row(
+                );
+
+                if (shouldPop == true && context.mounted) {
+                  Navigator.of(context).pop();
+                }
+              }
+            },
+            child: KeyboardListener(
+              focusNode: FocusNode(),
+              autofocus: true,
+              onKeyEvent: (KeyEvent event) {
+                if (event is KeyDownEvent) {
+                  // مفتاح Escape للخروج
+                  if (event.logicalKey == LogicalKeyboardKey.escape) {
+                    _confirmExit(context);
+                  }
+                }
+              },
+              child: ScaffoldPage(
+                header: const TemplateDesignerHeader(),
+                content: Row(
+                  children: [
+                    // Left Panel - Elements
+                    Container(
+                      width: 300,
+                      decoration: BoxDecoration(
+                        color: FluentTheme.of(context).cardColor,
+                        border: Border(
+                          right: BorderSide(
+                            color: FluentTheme.of(
+                              context,
+                            ).resources.cardStrokeColorDefault,
+                          ),
+                        ),
+                      ),
+                      child: Column(
                         children: [
-                          Expanded(
-                            child: Button(
-                              onPressed: () =>
-                                  setState(() => _currentTabIndex = 0),
-                              child: Container(
-                                padding: const EdgeInsets.symmetric(
-                                  vertical: 8,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: _currentTabIndex == 0
-                                      ? FluentTheme.of(
-                                          context,
-                                        ).accentColor.withOpacity(0.1)
-                                      : null,
-                                  border: Border(
-                                    bottom: BorderSide(
+                          // Tab Buttons
+                          Row(
+                            children: [
+                              Expanded(
+                                child: Button(
+                                  onPressed: () =>
+                                      setState(() => _currentTabIndex = 0),
+                                  child: Container(
+                                    padding: const EdgeInsets.symmetric(
+                                      vertical: 8,
+                                    ),
+                                    decoration: BoxDecoration(
                                       color: _currentTabIndex == 0
-                                          ? FluentTheme.of(context).accentColor
-                                          : Colors.transparent,
-                                      width: 2,
+                                          ? FluentTheme.of(
+                                              context,
+                                            ).accentColor.withOpacity(0.1)
+                                          : null,
+                                      border: Border(
+                                        bottom: BorderSide(
+                                          color: _currentTabIndex == 0
+                                              ? FluentTheme.of(
+                                                  context,
+                                                ).accentColor
+                                              : Colors.transparent,
+                                          width: 2,
+                                        ),
+                                      ),
+                                    ),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Icon(FluentIcons.settings, size: 16),
+                                        const SizedBox(width: 4),
+                                        Text(
+                                          'إعدادات',
+                                          style: TextStyle(fontSize: 12),
+                                        ),
+                                      ],
                                     ),
                                   ),
                                 ),
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Icon(FluentIcons.settings, size: 16),
-                                    const SizedBox(width: 4),
-                                    Text(
-                                      'إعدادات',
-                                      style: TextStyle(fontSize: 12),
-                                    ),
-                                  ],
-                                ),
                               ),
-                            ),
-                          ),
-                          Expanded(
-                            child: Button(
-                              onPressed: () =>
-                                  setState(() => _currentTabIndex = 1),
-                              child: Container(
-                                padding: const EdgeInsets.symmetric(
-                                  vertical: 8,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: _currentTabIndex == 1
-                                      ? FluentTheme.of(
-                                          context,
-                                        ).accentColor.withOpacity(0.1)
-                                      : null,
-                                  border: Border(
-                                    bottom: BorderSide(
+                              Expanded(
+                                child: Button(
+                                  onPressed: () =>
+                                      setState(() => _currentTabIndex = 1),
+                                  child: Container(
+                                    padding: const EdgeInsets.symmetric(
+                                      vertical: 8,
+                                    ),
+                                    decoration: BoxDecoration(
                                       color: _currentTabIndex == 1
-                                          ? FluentTheme.of(context).accentColor
-                                          : Colors.transparent,
-                                      width: 2,
+                                          ? FluentTheme.of(
+                                              context,
+                                            ).accentColor.withOpacity(0.1)
+                                          : null,
+                                      border: Border(
+                                        bottom: BorderSide(
+                                          color: _currentTabIndex == 1
+                                              ? FluentTheme.of(
+                                                  context,
+                                                ).accentColor
+                                              : Colors.transparent,
+                                          width: 2,
+                                        ),
+                                      ),
+                                    ),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Icon(FluentIcons.photo2, size: 16),
+                                        const SizedBox(width: 4),
+                                        Text(
+                                          'خلفية',
+                                          style: TextStyle(fontSize: 12),
+                                        ),
+                                      ],
                                     ),
                                   ),
                                 ),
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Icon(FluentIcons.photo2, size: 16),
-                                    const SizedBox(width: 4),
-                                    Text(
-                                      'خلفية',
-                                      style: TextStyle(fontSize: 12),
-                                    ),
-                                  ],
-                                ),
                               ),
-                            ),
-                          ),
-                          Expanded(
-                            child: Button(
-                              onPressed: () =>
-                                  setState(() => _currentTabIndex = 2),
-                              child: Container(
-                                padding: const EdgeInsets.symmetric(
-                                  vertical: 8,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: _currentTabIndex == 2
-                                      ? FluentTheme.of(
-                                          context,
-                                        ).accentColor.withOpacity(0.1)
-                                      : null,
-                                  border: Border(
-                                    bottom: BorderSide(
+                              Expanded(
+                                child: Button(
+                                  onPressed: () =>
+                                      setState(() => _currentTabIndex = 2),
+                                  child: Container(
+                                    padding: const EdgeInsets.symmetric(
+                                      vertical: 8,
+                                    ),
+                                    decoration: BoxDecoration(
                                       color: _currentTabIndex == 2
-                                          ? FluentTheme.of(context).accentColor
-                                          : Colors.transparent,
-                                      width: 2,
+                                          ? FluentTheme.of(
+                                              context,
+                                            ).accentColor.withOpacity(0.1)
+                                          : null,
+                                      border: Border(
+                                        bottom: BorderSide(
+                                          color: _currentTabIndex == 2
+                                              ? FluentTheme.of(
+                                                  context,
+                                                ).accentColor
+                                              : Colors.transparent,
+                                          width: 2,
+                                        ),
+                                      ),
+                                    ),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Icon(FluentIcons.stack, size: 16),
+                                        const SizedBox(width: 4),
+                                        Text(
+                                          'طبقات',
+                                          style: TextStyle(fontSize: 12),
+                                        ),
+                                      ],
                                     ),
                                   ),
                                 ),
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Icon(FluentIcons.stack, size: 16),
-                                    const SizedBox(width: 4),
-                                    Text(
-                                      'طبقات',
-                                      style: TextStyle(fontSize: 12),
-                                    ),
-                                  ],
-                                ),
                               ),
+                            ],
+                          ),
+                          // Tab Content
+                          Expanded(
+                            child: _getTabContent(
+                              _currentTabIndex,
+                              designerProvider,
                             ),
                           ),
                         ],
                       ),
-                      // Tab Content
-                      Expanded(
-                        child: _getTabContent(
-                          _currentTabIndex,
-                          designerProvider,
+                    ),
+                    // Center - Canvas
+                    Expanded(
+                      child: Container(
+                        color: const Color(0xFFF5F5F5),
+                        child: Column(
+                          children: [
+                            // Toolbar
+                            const DesignerToolbar(),
+                            // Canvas
+                            Expanded(
+                              child: Center(child: const DesignerCanvas()),
+                            ),
+                            // Status Bar
+                            Container(
+                              height: 30,
+                              padding: EdgeInsets.symmetric(horizontal: 16),
+                              decoration: BoxDecoration(
+                                color: FluentTheme.of(context).cardColor,
+                                border: Border(
+                                  top: BorderSide(
+                                    color: FluentTheme.of(
+                                      context,
+                                    ).resources.cardStrokeColorDefault,
+                                  ),
+                                ),
+                              ),
+                              child: Row(
+                                children: [
+                                  Icon(
+                                    FluentIcons.info,
+                                    size: 14,
+                                    color: Colors.grey[100],
+                                  ),
+                                  SizedBox(width: 8),
+                                  Text(
+                                    'اضغط Esc للخروج • انقر على "رجوع" في الأعلى • أو احفظ واخرج',
+                                    style: TextStyle(
+                                      fontSize: 11,
+                                      color: Colors.grey[100],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
                         ),
                       ),
-                    ],
-                  ),
-                ),
-                // Center - Canvas
-                Expanded(
-                  child: Container(
-                    color: const Color(0xFFF5F5F5),
-                    child: Column(
-                      children: [
-                        // Toolbar
-                        const DesignerToolbar(),
-                        // Canvas
-                        Expanded(child: Center(child: const DesignerCanvas())),
-                      ],
                     ),
-                  ),
-                ),
-                // Right Panel - Properties
-                Container(
-                  width: 300,
-                  decoration: BoxDecoration(
-                    color: FluentTheme.of(context).cardColor,
-                    border: Border(
-                      left: BorderSide(
-                        color: FluentTheme.of(
-                          context,
-                        ).resources.cardStrokeColorDefault,
+                    // Right Panel - Properties
+                    Container(
+                      width: 300,
+                      decoration: BoxDecoration(
+                        color: FluentTheme.of(context).cardColor,
+                        border: Border(
+                          left: BorderSide(
+                            color: FluentTheme.of(
+                              context,
+                            ).resources.cardStrokeColorDefault,
+                          ),
+                        ),
                       ),
+                      child: ElementPropertiesPanel(),
                     ),
-                  ),
-                  child: ElementPropertiesPanel(),
+                  ],
                 ),
-              ],
+              ),
             ),
           );
         },
@@ -239,7 +358,7 @@ Widget _buildTemplateSettings(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'إعدادات القالب',
+          'إعدادات القالب (اضغط Esc للخروج)',
           style: FluentTheme.of(context).typography.subtitle,
         ),
         const SizedBox(height: 12),
@@ -562,11 +681,29 @@ class TemplateDesignerHeader extends StatelessWidget {
           primaryItems: [
             CommandBarBuilderItem(
               builder: (context, mode, w) =>
+                  Tooltip(message: 'العودة للصفحة الرئيسية', child: w),
+              wrappedItem: CommandBarButton(
+                icon: const Icon(FluentIcons.back),
+                label: Text('رجوع', style: TextStyle(color: Colors.black)),
+                onPressed: () => Navigator.of(context).pop(),
+              ),
+            ),
+            CommandBarBuilderItem(
+              builder: (context, mode, w) =>
                   Tooltip(message: 'حفظ القالب', child: w),
               wrappedItem: CommandBarButton(
                 icon: const Icon(FluentIcons.save),
                 label: Text('حفظ', style: TextStyle(color: Colors.black)),
                 onPressed: () => _saveTemplate(context, provider),
+              ),
+            ),
+            CommandBarBuilderItem(
+              builder: (context, mode, w) =>
+                  Tooltip(message: 'حفظ والخروج', child: w),
+              wrappedItem: CommandBarButton(
+                icon: const Icon(FluentIcons.save_as),
+                label: Text('حفظ وخروج', style: TextStyle(color: Colors.black)),
+                onPressed: () => _saveAndExit(context, provider),
               ),
             ),
             CommandBarBuilderItem(
@@ -624,6 +761,40 @@ class TemplateDesignerHeader extends StatelessWidget {
     );
   }
 
+  void _saveAndExit(
+    BuildContext context,
+    TemplateDesignerProvider provider,
+  ) async {
+    final templateProvider = context.read<TemplateProvider>();
+    final template = provider.buildTemplate();
+
+    final success = await templateProvider.addTemplate(template);
+
+    if (success && context.mounted) {
+      // إظهار رسالة نجاح سريعة
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) => ContentDialog(
+          title: Text('تم الحفظ', style: TextStyle(color: Colors.black)),
+          content: Text(
+            'تم حفظ القالب بنجاح وسيتم إغلاق صانع القوالب',
+            style: TextStyle(color: Colors.black),
+          ),
+          actions: [
+            FilledButton(
+              child: Text('موافق'),
+              onPressed: () {
+                Navigator.of(context).pop(); // إغلاق الحوار
+                Navigator.of(context).pop(); // العودة للصفحة الرئيسية
+              },
+            ),
+          ],
+        ),
+      );
+    }
+  }
+
   void _saveTemplate(
     BuildContext context,
     TemplateDesignerProvider provider,
@@ -644,8 +815,18 @@ class TemplateDesignerHeader extends StatelessWidget {
           ),
           actions: [
             Button(
-              child: Text('موافق', style: TextStyle(color: Colors.black)),
+              child: Text(
+                'متابعة التحرير',
+                style: TextStyle(color: Colors.black),
+              ),
               onPressed: () => Navigator.of(context).pop(),
+            ),
+            FilledButton(
+              child: Text('حفظ والخروج'),
+              onPressed: () {
+                Navigator.of(context).pop(); // إغلاق الحوار
+                Navigator.of(context).pop(); // العودة للصفحة الرئيسية
+              },
             ),
           ],
         ),
