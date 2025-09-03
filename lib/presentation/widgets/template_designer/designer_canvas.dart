@@ -88,15 +88,6 @@ class _DesignerCanvasState extends State<DesignerCanvas> {
                             ...provider.elements.map(
                               (element) => _buildElement(provider, element),
                             ),
-                            // Selection overlay
-                            if (provider.selectedElement != null)
-                              _buildSelectionOverlay(
-                                provider,
-                                provider.selectedElement!,
-                              ),
-                            // Background selection overlay
-                            if (provider.isBackgroundSelected)
-                              _buildBackgroundSelectionOverlay(provider),
                           ],
                         ),
                       ),
@@ -131,25 +122,8 @@ class _DesignerCanvasState extends State<DesignerCanvas> {
     TemplateDesignerProvider provider,
     TapDownDetails details,
   ) {
-    // Convert screen coordinates to canvas coordinates
-    final RenderBox box = context.findRenderObject() as RenderBox;
-    final localPosition = box.globalToLocal(details.globalPosition);
-
-    // Check if any element was clicked
-    TemplateElement? clickedElement;
-    for (final element in provider.elements.reversed) {
-      if (_isPointInElement(localPosition, element, provider)) {
-        clickedElement = element;
-        break;
-      }
-    }
-
-    if (clickedElement != null) {
-      provider.selectElement(clickedElement);
-    } else {
-      // No element clicked, select background
-      provider.selectBackground(true);
-    }
+    // No selection logic - just focus the canvas
+    _focusNode.requestFocus();
   }
 
   void _handleCanvasPan(
@@ -165,22 +139,6 @@ class _DesignerCanvasState extends State<DesignerCanvas> {
       // Pan canvas
       provider.setCanvasOffset(provider.canvasOffset + details.delta);
     }
-  }
-
-  bool _isPointInElement(
-    Offset point,
-    TemplateElement element,
-    TemplateDesignerProvider provider,
-  ) {
-    final elementX = element.x * _cmToPx * provider.canvasZoom;
-    final elementY = element.y * _cmToPx * provider.canvasZoom;
-    final elementWidth = element.width * _cmToPx * provider.canvasZoom;
-    final elementHeight = element.height * _cmToPx * provider.canvasZoom;
-
-    return point.dx >= elementX &&
-        point.dx <= elementX + elementWidth &&
-        point.dy >= elementY &&
-        point.dy <= elementY + elementHeight;
   }
 
   Color _getBackgroundColor(Map<String, dynamic> backgroundProperties) {
@@ -274,7 +232,6 @@ class _DesignerCanvasState extends State<DesignerCanvas> {
       width: element.width * _cmToPx,
       height: element.height * _cmToPx,
       child: GestureDetector(
-        onTap: () => provider.selectElement(element),
         onPanUpdate: (details) {
           final deltaX = details.delta.dx / _cmToPx;
           final deltaY = details.delta.dy / _cmToPx;
@@ -489,106 +446,6 @@ class _DesignerCanvasState extends State<DesignerCanvas> {
           ),
         );
     }
-  }
-
-  Widget _buildSelectionOverlay(
-    TemplateDesignerProvider provider,
-    TemplateElement element,
-  ) {
-    return Positioned(
-      left: element.x * _cmToPx - 4,
-      top: element.y * _cmToPx - 4,
-      width: element.width * _cmToPx + 8,
-      height: element.height * _cmToPx + 8,
-      child: Container(
-        decoration: BoxDecoration(
-          border: Border.all(color: Colors.blue, width: 2),
-        ),
-        child: Stack(
-          children: [
-            // Resize handles
-            ..._buildResizeHandles(provider, element),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildBackgroundSelectionOverlay(TemplateDesignerProvider provider) {
-    return Positioned.fill(
-      child: Container(
-        decoration: BoxDecoration(
-          border: Border.all(color: const Color(0xFF4CAF50), width: 3),
-        ),
-        child: const Center(
-          child: Text(
-            'خلفية محددة',
-            style: TextStyle(
-              color: Color(0xFF4CAF50),
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  List<Widget> _buildResizeHandles(
-    TemplateDesignerProvider provider,
-    TemplateElement element,
-  ) {
-    const handleSize = 8.0;
-
-    return [
-      // Top-left
-      Positioned(
-        left: -handleSize / 2,
-        top: -handleSize / 2,
-        child: _buildResizeHandle(() {
-          // TODO: Implement corner resize
-        }),
-      ),
-      // Top-right
-      Positioned(
-        right: -handleSize / 2,
-        top: -handleSize / 2,
-        child: _buildResizeHandle(() {
-          // TODO: Implement corner resize
-        }),
-      ),
-      // Bottom-left
-      Positioned(
-        left: -handleSize / 2,
-        bottom: -handleSize / 2,
-        child: _buildResizeHandle(() {
-          // TODO: Implement corner resize
-        }),
-      ),
-      // Bottom-right
-      Positioned(
-        right: -handleSize / 2,
-        bottom: -handleSize / 2,
-        child: _buildResizeHandle(() {
-          // TODO: Implement corner resize
-        }),
-      ),
-    ];
-  }
-
-  Widget _buildResizeHandle(VoidCallback onResize) {
-    return GestureDetector(
-      onPanUpdate: (details) => onResize(),
-      child: Container(
-        width: 8,
-        height: 8,
-        decoration: BoxDecoration(
-          color: Colors.blue,
-          border: Border.all(color: Colors.white, width: 1),
-          shape: BoxShape.circle,
-        ),
-      ),
-    );
   }
 
   // Helper methods for parsing properties
