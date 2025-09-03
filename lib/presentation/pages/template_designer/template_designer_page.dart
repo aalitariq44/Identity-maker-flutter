@@ -112,7 +112,7 @@ class _TemplateDesignerPageState extends State<TemplateDesignerPage> {
                                   children: [
                                     Icon(FluentIcons.stack, size: 16),
                                     const SizedBox(width: 8),
-                                    Text('الطبقات'),
+                                    Text('الطبقات', style: TextStyle(color: Colors.black)),
                                   ],
                                 ),
                               ),

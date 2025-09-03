@@ -32,7 +32,7 @@ class ElementsPanel extends StatelessWidget {
           children: [
             Text(
               'إضافة عنصر جديد',
-              style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13),
+              style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13, color: Colors.black),
             ),
             const SizedBox(height: 12),
 
@@ -58,7 +58,7 @@ class ElementsPanel extends StatelessWidget {
       children: [
         Text(
           'نصوص',
-          style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500),
+          style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500, color: Colors.black),
         ),
         const SizedBox(height: 4),
         GridView.count(
@@ -114,7 +114,7 @@ class ElementsPanel extends StatelessWidget {
       children: [
         Text(
           'صور',
-          style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500),
+          style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500, color: Colors.black),
         ),
         const SizedBox(height: 4),
         GridView.count(
@@ -159,7 +159,7 @@ class ElementsPanel extends StatelessWidget {
       children: [
         Text(
           'أشكال',
-          style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500),
+          style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500, color: Colors.black),
         ),
         const SizedBox(height: 4),
         GridView.count(
@@ -206,7 +206,7 @@ class ElementsPanel extends StatelessWidget {
             const SizedBox(height: 2),
             Text(
               label,
-              style: TextStyle(fontSize: 9),
+              style: TextStyle(fontSize: 9, color: Colors.black),
               textAlign: TextAlign.center,
             ),
           ],
@@ -230,7 +230,7 @@ class ElementsPanel extends StatelessWidget {
             Text(
               'لا توجد عناصر',
               style: TextStyle(
-                color: Colors.grey.withOpacity(0.5),
+                color: Colors.black,
                 fontSize: 14,
               ),
             ),
@@ -238,7 +238,7 @@ class ElementsPanel extends StatelessWidget {
             Text(
               'أضف عنصر لبدء التصميم',
               style: TextStyle(
-                color: Colors.grey.withOpacity(0.6),
+                color: Colors.black,
                 fontSize: 12,
               ),
             ),
@@ -279,11 +279,12 @@ class ElementsPanel extends StatelessWidget {
             style: TextStyle(
               fontSize: 12,
               fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
+              color: Colors.black,
             ),
           ),
           subtitle: Text(
             _getElementSubtitle(element),
-            style: TextStyle(fontSize: 10),
+            style: TextStyle(fontSize: 10, color: Colors.black),
           ),
           trailing: Row(
             mainAxisSize: MainAxisSize.min,
@@ -304,23 +305,23 @@ class ElementsPanel extends StatelessWidget {
                 items: [
                   MenuFlyoutItem(
                     leading: Icon(FluentIcons.copy),
-                    text: Text('نسخ'),
+                    text: Text('نسخ', style: TextStyle(color: Colors.black)),
                     onPressed: () => provider.duplicateElement(element.id),
                   ),
                   MenuFlyoutItem(
                     leading: Icon(FluentIcons.up),
-                    text: Text('للمقدمة'),
+                    text: Text('للمقدمة', style: TextStyle(color: Colors.black)),
                     onPressed: () => provider.bringToFront(element.id),
                   ),
                   MenuFlyoutItem(
                     leading: Icon(FluentIcons.down),
-                    text: Text('للخلف'),
+                    text: Text('للخلف', style: TextStyle(color: Colors.black)),
                     onPressed: () => provider.sendToBack(element.id),
                   ),
                   MenuFlyoutSeparator(),
                   MenuFlyoutItem(
                     leading: Icon(FluentIcons.delete),
-                    text: Text('حذف'),
+                    text: Text('حذف', style: TextStyle(color: Colors.black)),
                     onPressed: () => provider.deleteElement(element.id),
                   ),
                 ],
