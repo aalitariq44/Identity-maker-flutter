@@ -17,7 +17,7 @@ class _ElementPropertiesPanelState extends State<ElementPropertiesPanel> {
     return Consumer<TemplateDesignerProvider>(
       builder: (context, provider, child) {
         final selectedElement = provider.selectedElement;
-        
+
         if (selectedElement == null) {
           return Card(
             child: Padding(
@@ -43,11 +43,11 @@ class _ElementPropertiesPanelState extends State<ElementPropertiesPanel> {
                   style: FluentTheme.of(context).typography.subtitle,
                 ),
                 const SizedBox(height: 16),
-                
+
                 // خصائص عامة
                 _buildGeneralProperties(provider, selectedElement),
                 const SizedBox(height: 16),
-                
+
                 // خصائص خاصة بنوع العنصر
                 if (selectedElement.type == 'image')
                   _buildImageProperties(provider, selectedElement),
@@ -63,7 +63,10 @@ class _ElementPropertiesPanelState extends State<ElementPropertiesPanel> {
     );
   }
 
-  Widget _buildGeneralProperties(TemplateDesignerProvider provider, TemplateElement element) {
+  Widget _buildGeneralProperties(
+    TemplateDesignerProvider provider,
+    TemplateElement element,
+  ) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -152,19 +155,23 @@ class _ElementPropertiesPanelState extends State<ElementPropertiesPanel> {
     );
   }
 
-  Widget _buildImageProperties(TemplateDesignerProvider provider, TemplateElement element) {
+  Widget _buildImageProperties(
+    TemplateDesignerProvider provider,
+    TemplateElement element,
+  ) {
     final properties = element.properties;
     final source = properties['source'] as String? ?? '';
     final imageType = properties['imageType'] as String?;
     final fit = properties['fit'] as String? ?? 'contain';
-    final borderRadius = (properties['borderRadius'] as num?)?.toDouble() ?? 0.0;
+    final borderRadius =
+        (properties['borderRadius'] as num?)?.toDouble() ?? 0.0;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text('خصائص الصورة'),
         const SizedBox(height: 8),
-        
+
         // اختيار مصدر الصورة
         Row(
           children: [
@@ -172,9 +179,18 @@ class _ElementPropertiesPanelState extends State<ElementPropertiesPanel> {
               child: ComboBox<String>(
                 value: imageType == 'custom' ? 'custom' : source,
                 items: [
-                  const ComboBoxItem(value: 'student_photo', child: Text('صورة الطالب')),
-                  const ComboBoxItem(value: 'school_logo', child: Text('شعار المدرسة')),
-                  const ComboBoxItem(value: 'custom', child: Text('صورة مخصصة')),
+                  const ComboBoxItem(
+                    value: 'student_photo',
+                    child: Text('صورة الطالب'),
+                  ),
+                  const ComboBoxItem(
+                    value: 'school_logo',
+                    child: Text('شعار المدرسة'),
+                  ),
+                  const ComboBoxItem(
+                    value: 'custom',
+                    child: Text('صورة مخصصة'),
+                  ),
                 ],
                 onChanged: (value) {
                   if (value == 'custom') {
@@ -183,7 +199,9 @@ class _ElementPropertiesPanelState extends State<ElementPropertiesPanel> {
                     final newProperties = Map<String, dynamic>.from(properties);
                     newProperties['source'] = value;
                     newProperties['imageType'] = 'builtin';
-                    final newElement = element.copyWith(properties: newProperties);
+                    final newElement = element.copyWith(
+                      properties: newProperties,
+                    );
                     provider.updateSelectedElement(newElement);
                   }
                 },
@@ -198,9 +216,9 @@ class _ElementPropertiesPanelState extends State<ElementPropertiesPanel> {
             ],
           ],
         ),
-        
+
         const SizedBox(height: 12),
-        
+
         // نوع العرض
         InfoLabel(
           label: 'نوع العرض',
@@ -215,10 +233,7 @@ class _ElementPropertiesPanelState extends State<ElementPropertiesPanel> {
                     Text(ImageFitConstants.getFitLabel(fitType)),
                     Text(
                       ImageFitConstants.getFitDescription(fitType),
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: Colors.grey[100],
-                      ),
+                      style: TextStyle(fontSize: 12, color: Colors.grey[100]),
                     ),
                   ],
                 ),
@@ -234,9 +249,9 @@ class _ElementPropertiesPanelState extends State<ElementPropertiesPanel> {
             },
           ),
         ),
-        
+
         const SizedBox(height: 12),
-        
+
         // انحناء الحواف
         InfoLabel(
           label: 'انحناء الحواف',
@@ -259,7 +274,10 @@ class _ElementPropertiesPanelState extends State<ElementPropertiesPanel> {
     );
   }
 
-  Widget _buildTextProperties(TemplateDesignerProvider provider, TemplateElement element) {
+  Widget _buildTextProperties(
+    TemplateDesignerProvider provider,
+    TemplateElement element,
+  ) {
     final properties = element.properties;
     final text = properties['text'] as String? ?? '';
     final fontSize = (properties['fontSize'] as num?)?.toDouble() ?? 14.0;
@@ -273,7 +291,7 @@ class _ElementPropertiesPanelState extends State<ElementPropertiesPanel> {
       children: [
         Text('خصائص النص'),
         const SizedBox(height: 8),
-        
+
         // النص
         InfoLabel(
           label: 'النص',
@@ -288,9 +306,9 @@ class _ElementPropertiesPanelState extends State<ElementPropertiesPanel> {
             maxLines: 3,
           ),
         ),
-        
+
         const SizedBox(height: 12),
-        
+
         // حجم الخط
         InfoLabel(
           label: 'حجم الخط',
@@ -309,16 +327,19 @@ class _ElementPropertiesPanelState extends State<ElementPropertiesPanel> {
             largeChange: 2.0,
           ),
         ),
-        
+
         const SizedBox(height: 12),
-        
+
         // عائلة الخط
         InfoLabel(
           label: 'نوع الخط',
           child: ComboBox<String>(
             value: fontFamily,
             items: const [
-              ComboBoxItem(value: 'NotoSansArabic', child: Text('نوتو العربية')),
+              ComboBoxItem(
+                value: 'NotoSansArabic',
+                child: Text('نوتو العربية'),
+              ),
               ComboBoxItem(value: 'Roboto', child: Text('روبوتو')),
             ],
             onChanged: (value) {
@@ -331,9 +352,9 @@ class _ElementPropertiesPanelState extends State<ElementPropertiesPanel> {
             },
           ),
         ),
-        
+
         const SizedBox(height: 12),
-        
+
         // وزن الخط
         InfoLabel(
           label: 'وزن الخط',
@@ -356,9 +377,9 @@ class _ElementPropertiesPanelState extends State<ElementPropertiesPanel> {
             },
           ),
         ),
-        
+
         const SizedBox(height: 12),
-        
+
         // محاذاة النص
         InfoLabel(
           label: 'محاذاة النص',
@@ -380,9 +401,9 @@ class _ElementPropertiesPanelState extends State<ElementPropertiesPanel> {
             },
           ),
         ),
-        
+
         const SizedBox(height: 12),
-        
+
         // لون النص
         InfoLabel(
           label: 'لون النص',
@@ -404,9 +425,13 @@ class _ElementPropertiesPanelState extends State<ElementPropertiesPanel> {
                   placeholder: '#000000',
                   onChanged: (value) {
                     if (value.startsWith('#') && value.length == 7) {
-                      final newProperties = Map<String, dynamic>.from(properties);
+                      final newProperties = Map<String, dynamic>.from(
+                        properties,
+                      );
                       newProperties['color'] = value;
-                      final newElement = element.copyWith(properties: newProperties);
+                      final newElement = element.copyWith(
+                        properties: newProperties,
+                      );
                       provider.updateSelectedElement(newElement);
                     }
                   },
@@ -419,7 +444,10 @@ class _ElementPropertiesPanelState extends State<ElementPropertiesPanel> {
     );
   }
 
-  Widget _buildShapeProperties(TemplateDesignerProvider provider, TemplateElement element) {
+  Widget _buildShapeProperties(
+    TemplateDesignerProvider provider,
+    TemplateElement element,
+  ) {
     final properties = element.properties;
     final shapeType = properties['shapeType'] as String? ?? 'rectangle';
     final fillColor = properties['fillColor'] as String? ?? '#CCCCCC';
@@ -431,7 +459,7 @@ class _ElementPropertiesPanelState extends State<ElementPropertiesPanel> {
       children: [
         Text('خصائص الشكل'),
         const SizedBox(height: 8),
-        
+
         // نوع الشكل
         InfoLabel(
           label: 'نوع الشكل',
@@ -451,9 +479,9 @@ class _ElementPropertiesPanelState extends State<ElementPropertiesPanel> {
             },
           ),
         ),
-        
+
         const SizedBox(height: 12),
-        
+
         // لون التعبئة
         InfoLabel(
           label: 'لون التعبئة',
@@ -475,9 +503,13 @@ class _ElementPropertiesPanelState extends State<ElementPropertiesPanel> {
                   placeholder: '#CCCCCC',
                   onChanged: (value) {
                     if (value.startsWith('#') && value.length == 7) {
-                      final newProperties = Map<String, dynamic>.from(properties);
+                      final newProperties = Map<String, dynamic>.from(
+                        properties,
+                      );
                       newProperties['fillColor'] = value;
-                      final newElement = element.copyWith(properties: newProperties);
+                      final newElement = element.copyWith(
+                        properties: newProperties,
+                      );
                       provider.updateSelectedElement(newElement);
                     }
                   },
@@ -486,9 +518,9 @@ class _ElementPropertiesPanelState extends State<ElementPropertiesPanel> {
             ],
           ),
         ),
-        
+
         const SizedBox(height: 12),
-        
+
         // لون الحدود
         InfoLabel(
           label: 'لون الحدود',
@@ -510,9 +542,13 @@ class _ElementPropertiesPanelState extends State<ElementPropertiesPanel> {
                   placeholder: '#000000',
                   onChanged: (value) {
                     if (value.startsWith('#') && value.length == 7) {
-                      final newProperties = Map<String, dynamic>.from(properties);
+                      final newProperties = Map<String, dynamic>.from(
+                        properties,
+                      );
                       newProperties['strokeColor'] = value;
-                      final newElement = element.copyWith(properties: newProperties);
+                      final newElement = element.copyWith(
+                        properties: newProperties,
+                      );
                       provider.updateSelectedElement(newElement);
                     }
                   },
@@ -521,9 +557,9 @@ class _ElementPropertiesPanelState extends State<ElementPropertiesPanel> {
             ],
           ),
         ),
-        
+
         const SizedBox(height: 12),
-        
+
         // سمك الحدود
         InfoLabel(
           label: 'سمك الحدود',

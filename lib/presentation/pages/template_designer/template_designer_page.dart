@@ -79,7 +79,10 @@ class _TemplateDesignerPageState extends State<TemplateDesignerPage> {
                                   children: [
                                     Icon(FluentIcons.settings, size: 16),
                                     const SizedBox(width: 4),
-                                    Text('إعدادات', style: TextStyle(fontSize: 12)),
+                                    Text(
+                                      'إعدادات',
+                                      style: TextStyle(fontSize: 12),
+                                    ),
                                   ],
                                 ),
                               ),
@@ -113,7 +116,10 @@ class _TemplateDesignerPageState extends State<TemplateDesignerPage> {
                                   children: [
                                     Icon(FluentIcons.photo2, size: 16),
                                     const SizedBox(width: 4),
-                                    Text('خلفية', style: TextStyle(fontSize: 12)),
+                                    Text(
+                                      'خلفية',
+                                      style: TextStyle(fontSize: 12),
+                                    ),
                                   ],
                                 ),
                               ),
@@ -147,7 +153,10 @@ class _TemplateDesignerPageState extends State<TemplateDesignerPage> {
                                   children: [
                                     Icon(FluentIcons.stack, size: 16),
                                     const SizedBox(width: 4),
-                                    Text('طبقات', style: TextStyle(fontSize: 12)),
+                                    Text(
+                                      'طبقات',
+                                      style: TextStyle(fontSize: 12),
+                                    ),
                                   ],
                                 ),
                               ),
@@ -157,7 +166,10 @@ class _TemplateDesignerPageState extends State<TemplateDesignerPage> {
                       ),
                       // Tab Content
                       Expanded(
-                        child: _getTabContent(_currentTabIndex, designerProvider),
+                        child: _getTabContent(
+                          _currentTabIndex,
+                          designerProvider,
+                        ),
                       ),
                     ],
                   ),
@@ -215,338 +227,329 @@ class _TemplateDesignerPageState extends State<TemplateDesignerPage> {
         );
     }
   }
-  }
+}
 
-  Widget _buildTemplateSettings(
-    BuildContext context,
-    TemplateDesignerProvider provider,
-  ) {
-    return Container(
-      padding: const EdgeInsets.all(16),
+Widget _buildTemplateSettings(
+  BuildContext context,
+  TemplateDesignerProvider provider,
+) {
+  return Container(
+    padding: const EdgeInsets.all(16),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'إعدادات القالب',
+          style: FluentTheme.of(context).typography.subtitle,
+        ),
+        const SizedBox(height: 12),
+
+        // Template Name
+        InfoLabel(
+          label: 'اسم القالب',
+          child: TextBox(
+            controller: provider.templateNameController,
+            placeholder: 'أدخل اسم القالب',
+            onChanged: (value) => provider.updateTemplateName(value),
+          ),
+        ),
+        const SizedBox(height: 12),
+
+        // Dimensions
+        Row(
+          children: [
+            Expanded(
+              child: InfoLabel(
+                label: 'العرض (سم)',
+                child: NumberBox<double>(
+                  value: provider.templateWidth,
+                  onChanged: (value) => provider.updateTemplateDimensions(
+                    width: value ?? provider.templateWidth,
+                  ),
+                  min: 1.0,
+                  max: 30.0,
+                  smallChange: 0.1,
+                  largeChange: 1.0,
+                  mode: SpinButtonPlacementMode.inline,
+                ),
+              ),
+            ),
+            const SizedBox(width: 8),
+            Expanded(
+              child: InfoLabel(
+                label: 'الارتفاع (سم)',
+                child: NumberBox<double>(
+                  value: provider.templateHeight,
+                  onChanged: (value) => provider.updateTemplateDimensions(
+                    height: value ?? provider.templateHeight,
+                  ),
+                  min: 1.0,
+                  max: 30.0,
+                  smallChange: 0.1,
+                  largeChange: 1.0,
+                  mode: SpinButtonPlacementMode.inline,
+                ),
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 12),
+
+        // Orientation
+        InfoLabel(
+          label: 'الاتجاه',
+          child: ComboBox<String>(
+            value: provider.templateOrientation,
+            items: const [
+              ComboBoxItem(value: 'horizontal', child: Text('أفقي')),
+              ComboBoxItem(value: 'vertical', child: Text('عمودي')),
+            ],
+            onChanged: (value) =>
+                provider.updateTemplateOrientation(value ?? 'horizontal'),
+          ),
+        ),
+        const SizedBox(height: 12),
+
+        // Quick Size Presets
+        InfoLabel(
+          label: 'أحجام جاهزة',
+          child: Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            children: [
+              _buildSizePreset(provider, 'ماستر كارد', 8.56, 5.398),
+              _buildSizePreset(provider, 'بطاقة عمل', 9.0, 5.0),
+              _buildSizePreset(provider, 'A7', 10.5, 7.4),
+              _buildSizePreset(
+                provider,
+                'مخصص',
+                provider.templateWidth,
+                provider.templateHeight,
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 16),
+
+        // Quick Add Section
+        _buildQuickAddSection(provider),
+      ],
+    ),
+  );
+}
+
+Widget _buildQuickAddSection(TemplateDesignerProvider provider) {
+  return Card(
+    child: Padding(
+      padding: const EdgeInsets.all(12),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'إعدادات القالب',
-            style: FluentTheme.of(context).typography.subtitle,
+            'إضافة عنصر جديد',
+            style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13),
           ),
           const SizedBox(height: 12),
 
-          // Template Name
-          InfoLabel(
-            label: 'اسم القالب',
-            child: TextBox(
-              controller: provider.templateNameController,
-              placeholder: 'أدخل اسم القالب',
-              onChanged: (value) => provider.updateTemplateName(value),
-            ),
-          ),
-          const SizedBox(height: 12),
+          // Text Elements
+          _buildAddTextSection(provider),
+          const SizedBox(height: 8),
 
-          // Dimensions
-          Row(
-            children: [
-              Expanded(
-                child: InfoLabel(
-                  label: 'العرض (سم)',
-                  child: NumberBox<double>(
-                    value: provider.templateWidth,
-                    onChanged: (value) => provider.updateTemplateDimensions(
-                      width: value ?? provider.templateWidth,
-                    ),
-                    min: 1.0,
-                    max: 30.0,
-                    smallChange: 0.1,
-                    largeChange: 1.0,
-                    mode: SpinButtonPlacementMode.inline,
-                  ),
-                ),
-              ),
-              const SizedBox(width: 8),
-              Expanded(
-                child: InfoLabel(
-                  label: 'الارتفاع (سم)',
-                  child: NumberBox<double>(
-                    value: provider.templateHeight,
-                    onChanged: (value) => provider.updateTemplateDimensions(
-                      height: value ?? provider.templateHeight,
-                    ),
-                    min: 1.0,
-                    max: 30.0,
-                    smallChange: 0.1,
-                    largeChange: 1.0,
-                    mode: SpinButtonPlacementMode.inline,
-                  ),
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 12),
+          // Image Elements
+          _buildAddImageSection(provider),
+          const SizedBox(height: 8),
 
-          // Orientation
-          InfoLabel(
-            label: 'الاتجاه',
-            child: ComboBox<String>(
-              value: provider.templateOrientation,
-              items: const [
-                ComboBoxItem(value: 'horizontal', child: Text('أفقي')),
-                ComboBoxItem(value: 'vertical', child: Text('عمودي')),
-              ],
-              onChanged: (value) =>
-                  provider.updateTemplateOrientation(value ?? 'horizontal'),
-            ),
-          ),
-          const SizedBox(height: 12),
-
-          // Quick Size Presets
-          InfoLabel(
-            label: 'أحجام جاهزة',
-            child: Wrap(
-              spacing: 8,
-              runSpacing: 8,
-              children: [
-                _buildSizePreset(provider, 'ماستر كارد', 8.56, 5.398),
-                _buildSizePreset(provider, 'بطاقة عمل', 9.0, 5.0),
-                _buildSizePreset(provider, 'A7', 10.5, 7.4),
-                _buildSizePreset(
-                  provider,
-                  'مخصص',
-                  provider.templateWidth,
-                  provider.templateHeight,
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 16),
-
-          // Quick Add Section
-          _buildQuickAddSection(provider),
+          // Shape Elements
+          _buildAddShapeSection(provider),
         ],
       ),
-    );
-  }
+    ),
+  );
+}
 
-  Widget _buildQuickAddSection(TemplateDesignerProvider provider) {
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(12),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'إضافة عنصر جديد',
-              style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13),
+Widget _buildAddTextSection(TemplateDesignerProvider provider) {
+  return Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      Text('نصوص', style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500)),
+      const SizedBox(height: 4),
+      GridView.count(
+        crossAxisCount: 3,
+        shrinkWrap: true,
+        physics: NeverScrollableScrollPhysics(),
+        mainAxisSpacing: 4,
+        crossAxisSpacing: 4,
+        children: [
+          _buildQuickAddButton(
+            'اسم الطالب',
+            FluentIcons.contact,
+            () => provider.addTextElement(
+              text: 'الاسم: {student_name}',
+              properties: {'fontWeight': 'bold'},
             ),
-            const SizedBox(height: 12),
-
-            // Text Elements
-            _buildAddTextSection(provider),
-            const SizedBox(height: 8),
-
-            // Image Elements
-            _buildAddImageSection(provider),
-            const SizedBox(height: 8),
-
-            // Shape Elements
-            _buildAddShapeSection(provider),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildAddTextSection(TemplateDesignerProvider provider) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          'نصوص',
-          style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500),
-        ),
-        const SizedBox(height: 4),
-        GridView.count(
-          crossAxisCount: 3,
-          shrinkWrap: true,
-          physics: NeverScrollableScrollPhysics(),
-          mainAxisSpacing: 4,
-          crossAxisSpacing: 4,
-          children: [
-            _buildQuickAddButton(
-              'اسم الطالب',
-              FluentIcons.contact,
-              () => provider.addTextElement(
-                text: 'الاسم: {student_name}',
-                properties: {'fontWeight': 'bold'},
-              ),
-            ),
-            _buildQuickAddButton(
-              'اسم المدرسة',
-              FluentIcons.education,
-              () => provider.addTextElement(
-                text: '{school_name_arabic}',
-                properties: {'fontSize': 16, 'fontWeight': 'bold'},
-              ),
-            ),
-            _buildQuickAddButton(
-              'الصف',
-              FluentIcons.number_field,
-              () => provider.addTextElement(text: 'الصف: {student_grade}'),
-            ),
-            _buildQuickAddButton(
-              'تاريخ الميلاد',
-              FluentIcons.calendar,
-              () => provider.addTextElement(
-                text: 'تاريخ الميلاد: {student_birth_date}',
-                properties: {'fontSize': 10},
-              ),
-            ),
-            _buildQuickAddButton(
-              'نص مخصص',
-              FluentIcons.text_field,
-              () => provider.addTextElement(text: 'نص جديد'),
-            ),
-          ],
-        ),
-      ],
-    );
-  }
-
-  Widget _buildAddImageSection(TemplateDesignerProvider provider) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          'صور',
-          style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500),
-        ),
-        const SizedBox(height: 4),
-        GridView.count(
-          crossAxisCount: 3,
-          shrinkWrap: true,
-          physics: NeverScrollableScrollPhysics(),
-          mainAxisSpacing: 4,
-          crossAxisSpacing: 4,
-          children: [
-            _buildQuickAddButton(
-              'صورة الطالب',
-              FluentIcons.contact,
-              () => provider.addImageElement(
-                source: 'student_photo',
-                width: 1.5,
-                height: 2.0,
-              ),
-            ),
-            _buildQuickAddButton(
-              'شعار المدرسة',
-              FluentIcons.education,
-              () => provider.addImageElement(
-                source: 'school_logo',
-                width: 2.0,
-                height: 2.0,
-              ),
-            ),
-            _buildQuickAddButton(
-              'صورة مخصصة',
-              FluentIcons.photo2,
-              () => provider.addImageElement(source: 'custom_image'),
-            ),
-          ],
-        ),
-      ],
-    );
-  }
-
-  Widget _buildAddShapeSection(TemplateDesignerProvider provider) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          'أشكال',
-          style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500),
-        ),
-        const SizedBox(height: 4),
-        GridView.count(
-          crossAxisCount: 3,
-          shrinkWrap: true,
-          physics: NeverScrollableScrollPhysics(),
-          mainAxisSpacing: 4,
-          crossAxisSpacing: 4,
-          children: [
-            _buildQuickAddButton(
-              'مستطيل',
-              FluentIcons.stop,
-              () => provider.addShapeElement(shapeType: 'rectangle'),
-            ),
-            _buildQuickAddButton(
-              'دائرة',
-              FluentIcons.radio_btn_on,
-              () => provider.addShapeElement(shapeType: 'circle'),
-            ),
-            _buildQuickAddButton(
-              'خط',
-              FluentIcons.line,
-              () => provider.addShapeElement(shapeType: 'line', height: 0.1),
-            ),
-          ],
-        ),
-      ],
-    );
-  }
-
-  Widget _buildQuickAddButton(
-    String label,
-    IconData icon,
-    VoidCallback onPressed,
-  ) {
-    return Button(
-      onPressed: onPressed,
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(icon, size: 14),
-            const SizedBox(height: 2),
-            Text(
-              label,
-              style: TextStyle(fontSize: 9),
-              textAlign: TextAlign.center,
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildSizePreset(
-    TemplateDesignerProvider provider,
-    String name,
-    double width,
-    double height,
-  ) {
-    final isSelected =
-        (provider.templateWidth - width).abs() < 0.1 &&
-        (provider.templateHeight - height).abs() < 0.1;
-
-    return Button(
-      onPressed: () =>
-          provider.updateTemplateDimensions(width: width, height: height),
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-        decoration: BoxDecoration(
-          color: isSelected ? Colors.blue.withOpacity(0.1) : null,
-          borderRadius: BorderRadius.circular(4),
-        ),
-        child: Text(
-          name,
-          style: TextStyle(
-            fontSize: 10,
-            color: isSelected ? Colors.blue : null,
           ),
-        ),
+          _buildQuickAddButton(
+            'اسم المدرسة',
+            FluentIcons.education,
+            () => provider.addTextElement(
+              text: '{school_name_arabic}',
+              properties: {'fontSize': 16, 'fontWeight': 'bold'},
+            ),
+          ),
+          _buildQuickAddButton(
+            'الصف',
+            FluentIcons.number_field,
+            () => provider.addTextElement(text: 'الصف: {student_grade}'),
+          ),
+          _buildQuickAddButton(
+            'تاريخ الميلاد',
+            FluentIcons.calendar,
+            () => provider.addTextElement(
+              text: 'تاريخ الميلاد: {student_birth_date}',
+              properties: {'fontSize': 10},
+            ),
+          ),
+          _buildQuickAddButton(
+            'نص مخصص',
+            FluentIcons.text_field,
+            () => provider.addTextElement(text: 'نص جديد'),
+          ),
+        ],
       ),
-    );
-  }
+    ],
+  );
+}
+
+Widget _buildAddImageSection(TemplateDesignerProvider provider) {
+  return Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      Text('صور', style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500)),
+      const SizedBox(height: 4),
+      GridView.count(
+        crossAxisCount: 3,
+        shrinkWrap: true,
+        physics: NeverScrollableScrollPhysics(),
+        mainAxisSpacing: 4,
+        crossAxisSpacing: 4,
+        children: [
+          _buildQuickAddButton(
+            'صورة الطالب',
+            FluentIcons.contact,
+            () => provider.addImageElement(
+              source: 'student_photo',
+              width: 1.5,
+              height: 2.0,
+            ),
+          ),
+          _buildQuickAddButton(
+            'شعار المدرسة',
+            FluentIcons.education,
+            () => provider.addImageElement(
+              source: 'school_logo',
+              width: 2.0,
+              height: 2.0,
+            ),
+          ),
+          _buildQuickAddButton(
+            'صورة مخصصة',
+            FluentIcons.photo2,
+            () => provider.addImageElement(source: 'custom_image'),
+          ),
+        ],
+      ),
+    ],
+  );
+}
+
+Widget _buildAddShapeSection(TemplateDesignerProvider provider) {
+  return Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      Text(
+        'أشكال',
+        style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500),
+      ),
+      const SizedBox(height: 4),
+      GridView.count(
+        crossAxisCount: 3,
+        shrinkWrap: true,
+        physics: NeverScrollableScrollPhysics(),
+        mainAxisSpacing: 4,
+        crossAxisSpacing: 4,
+        children: [
+          _buildQuickAddButton(
+            'مستطيل',
+            FluentIcons.stop,
+            () => provider.addShapeElement(shapeType: 'rectangle'),
+          ),
+          _buildQuickAddButton(
+            'دائرة',
+            FluentIcons.radio_btn_on,
+            () => provider.addShapeElement(shapeType: 'circle'),
+          ),
+          _buildQuickAddButton(
+            'خط',
+            FluentIcons.line,
+            () => provider.addShapeElement(shapeType: 'line', height: 0.1),
+          ),
+        ],
+      ),
+    ],
+  );
+}
+
+Widget _buildQuickAddButton(
+  String label,
+  IconData icon,
+  VoidCallback onPressed,
+) {
+  return Button(
+    onPressed: onPressed,
+    child: Container(
+      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: 14),
+          const SizedBox(height: 2),
+          Text(
+            label,
+            style: TextStyle(fontSize: 9),
+            textAlign: TextAlign.center,
+          ),
+        ],
+      ),
+    ),
+  );
+}
+
+Widget _buildSizePreset(
+  TemplateDesignerProvider provider,
+  String name,
+  double width,
+  double height,
+) {
+  final isSelected =
+      (provider.templateWidth - width).abs() < 0.1 &&
+      (provider.templateHeight - height).abs() < 0.1;
+
+  return Button(
+    onPressed: () =>
+        provider.updateTemplateDimensions(width: width, height: height),
+    child: Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      decoration: BoxDecoration(
+        color: isSelected ? Colors.blue.withOpacity(0.1) : null,
+        borderRadius: BorderRadius.circular(4),
+      ),
+      child: Text(
+        name,
+        style: TextStyle(fontSize: 10, color: isSelected ? Colors.blue : null),
+      ),
+    ),
+  );
+}
 
 class TemplateDesignerHeader extends StatelessWidget {
   const TemplateDesignerHeader({super.key});

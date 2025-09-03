@@ -7,7 +7,8 @@ class BackgroundSettingsPanel extends StatefulWidget {
   const BackgroundSettingsPanel({super.key});
 
   @override
-  State<BackgroundSettingsPanel> createState() => _BackgroundSettingsPanelState();
+  State<BackgroundSettingsPanel> createState() =>
+      _BackgroundSettingsPanelState();
 }
 
 class _BackgroundSettingsPanelState extends State<BackgroundSettingsPanel> {
@@ -16,9 +17,10 @@ class _BackgroundSettingsPanelState extends State<BackgroundSettingsPanel> {
     return Consumer<TemplateDesignerProvider>(
       builder: (context, provider, child) {
         final backgroundProps = provider.backgroundProperties;
-        final hasImage = backgroundProps['image'] != null && 
-                         backgroundProps['image'] != 'none';
-        
+        final hasImage =
+            backgroundProps['image'] != null &&
+            backgroundProps['image'] != 'none';
+
         return Card(
           child: Padding(
             padding: const EdgeInsets.all(16.0),
@@ -30,18 +32,18 @@ class _BackgroundSettingsPanelState extends State<BackgroundSettingsPanel> {
                   style: FluentTheme.of(context).typography.subtitle,
                 ),
                 const SizedBox(height: 16),
-                
+
                 // لون الخلفية
                 _buildColorSection(provider, backgroundProps),
                 const SizedBox(height: 16),
-                
+
                 // الشفافية
                 _buildOpacitySection(provider, backgroundProps),
                 const SizedBox(height: 16),
-                
+
                 // قسم الصورة
                 _buildImageSection(provider, backgroundProps, hasImage),
-                
+
                 // إعدادات عرض الصورة
                 if (hasImage) ...[
                   const SizedBox(height: 16),
@@ -55,10 +57,13 @@ class _BackgroundSettingsPanelState extends State<BackgroundSettingsPanel> {
     );
   }
 
-  Widget _buildColorSection(TemplateDesignerProvider provider, Map<String, dynamic> props) {
+  Widget _buildColorSection(
+    TemplateDesignerProvider provider,
+    Map<String, dynamic> props,
+  ) {
     final colorHex = props['color'] as String? ?? '#FFFFFF';
     final color = _parseColor(colorHex);
-    
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -96,28 +101,43 @@ class _BackgroundSettingsPanelState extends State<BackgroundSettingsPanel> {
         // ألوان سريعة
         Wrap(
           spacing: 8,
-          children: [
-            '#FFFFFF', '#F5F5F5', '#E0E0E0', '#BDBDBD',
-            '#2196F3', '#4CAF50', '#FF9800', '#F44336',
-            '#9C27B0', '#607D8B', '#795548', '#000000',
-          ].map((colorValue) => _buildQuickColorButton(provider, props, colorValue)).toList(),
+          children:
+              [
+                    '#FFFFFF',
+                    '#F5F5F5',
+                    '#E0E0E0',
+                    '#BDBDBD',
+                    '#2196F3',
+                    '#4CAF50',
+                    '#FF9800',
+                    '#F44336',
+                    '#9C27B0',
+                    '#607D8B',
+                    '#795548',
+                    '#000000',
+                  ]
+                  .map(
+                    (colorValue) =>
+                        _buildQuickColorButton(provider, props, colorValue),
+                  )
+                  .toList(),
         ),
       ],
     );
   }
 
-  Widget _buildOpacitySection(TemplateDesignerProvider provider, Map<String, dynamic> props) {
+  Widget _buildOpacitySection(
+    TemplateDesignerProvider provider,
+    Map<String, dynamic> props,
+  ) {
     final opacity = (props['opacity'] as num?)?.toDouble() ?? 1.0;
-    
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text('الشفافية'),
-            Text('${(opacity * 100).round()}%'),
-          ],
+          children: [Text('الشفافية'), Text('${(opacity * 100).round()}%')],
         ),
         const SizedBox(height: 8),
         Slider(
@@ -126,17 +146,18 @@ class _BackgroundSettingsPanelState extends State<BackgroundSettingsPanel> {
           max: 1.0,
           divisions: 20,
           onChanged: (value) {
-            provider.updateBackgroundProperties({
-              ...props,
-              'opacity': value,
-            });
+            provider.updateBackgroundProperties({...props, 'opacity': value});
           },
         ),
       ],
     );
   }
 
-  Widget _buildImageSection(TemplateDesignerProvider provider, Map<String, dynamic> props, bool hasImage) {
+  Widget _buildImageSection(
+    TemplateDesignerProvider provider,
+    Map<String, dynamic> props,
+    bool hasImage,
+  ) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -181,7 +202,10 @@ class _BackgroundSettingsPanelState extends State<BackgroundSettingsPanel> {
                 children: [
                   Icon(FluentIcons.accept, color: Colors.green, size: 16),
                   const SizedBox(width: 8),
-                  Text('تم اختيار الصورة', style: TextStyle(color: Colors.green)),
+                  Text(
+                    'تم اختيار الصورة',
+                    style: TextStyle(color: Colors.green),
+                  ),
                 ],
               ),
             ),
@@ -191,9 +215,12 @@ class _BackgroundSettingsPanelState extends State<BackgroundSettingsPanel> {
     );
   }
 
-  Widget _buildImageFitSection(TemplateDesignerProvider provider, Map<String, dynamic> props) {
+  Widget _buildImageFitSection(
+    TemplateDesignerProvider provider,
+    Map<String, dynamic> props,
+  ) {
     final currentFit = props['imageFit'] as String? ?? 'cover';
-    
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -210,10 +237,7 @@ class _BackgroundSettingsPanelState extends State<BackgroundSettingsPanel> {
                   Text(ImageFitConstants.getFitLabel(fitType)),
                   Text(
                     ImageFitConstants.getFitDescription(fitType),
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: Colors.grey[100],
-                    ),
+                    style: TextStyle(fontSize: 12, color: Colors.grey[100]),
                   ),
                 ],
               ),
@@ -229,16 +253,17 @@ class _BackgroundSettingsPanelState extends State<BackgroundSettingsPanel> {
     );
   }
 
-  Widget _buildQuickColorButton(TemplateDesignerProvider provider, Map<String, dynamic> props, String colorValue) {
+  Widget _buildQuickColorButton(
+    TemplateDesignerProvider provider,
+    Map<String, dynamic> props,
+    String colorValue,
+  ) {
     final color = _parseColor(colorValue);
     final isSelected = props['color'] == colorValue;
-    
+
     return GestureDetector(
       onTap: () {
-        provider.updateBackgroundProperties({
-          ...props,
-          'color': colorValue,
-        });
+        provider.updateBackgroundProperties({...props, 'color': colorValue});
       },
       child: Container(
         width: 32,
@@ -251,13 +276,15 @@ class _BackgroundSettingsPanelState extends State<BackgroundSettingsPanel> {
           ),
           borderRadius: BorderRadius.circular(6),
         ),
-        child: isSelected 
-          ? Icon(
-              FluentIcons.accept,
-              color: color.computeLuminance() > 0.5 ? Colors.black : Colors.white,
-              size: 16,
-            )
-          : null,
+        child: isSelected
+            ? Icon(
+                FluentIcons.accept,
+                color: color.computeLuminance() > 0.5
+                    ? Colors.black
+                    : Colors.white,
+                size: 16,
+              )
+            : null,
       ),
     );
   }

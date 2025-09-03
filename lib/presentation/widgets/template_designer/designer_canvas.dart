@@ -209,7 +209,7 @@ class _DesignerCanvasState extends State<DesignerCanvas> {
 
     if (image != null && image != 'none') {
       Widget imageWidget;
-      
+
       if (imageType == 'custom' && File(image).existsSync()) {
         // عرض الصورة المخصصة من الكمبيوتر
         imageWidget = Container(
@@ -240,12 +240,7 @@ class _DesignerCanvasState extends State<DesignerCanvas> {
 
       // دمج لون الخلفية مع الصورة إذا كان هناك شفافية
       if (opacity < 1.0) {
-        backgroundWidget = Stack(
-          children: [
-            backgroundWidget,
-            imageWidget,
-          ],
-        );
+        backgroundWidget = Stack(children: [backgroundWidget, imageWidget]);
       } else {
         backgroundWidget = imageWidget;
       }
@@ -346,7 +341,8 @@ class _DesignerCanvasState extends State<DesignerCanvas> {
   Widget _buildImageElement(TemplateElement element) {
     final properties = element.properties;
     final source = properties['source'] as String? ?? '';
-    final borderRadius = (properties['borderRadius'] as num?)?.toDouble() ?? 0.0;
+    final borderRadius =
+        (properties['borderRadius'] as num?)?.toDouble() ?? 0.0;
     final imageType = properties['imageType'] as String?;
     final fit = properties['fit'] as String? ?? 'contain';
 

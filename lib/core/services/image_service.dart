@@ -31,15 +31,18 @@ class ImageService {
   /// حفظ الصورة محلياً في مجلد التطبيق
   Future<String> _saveImageLocally(String sourcePath) async {
     final appDir = await getApplicationDocumentsDirectory();
-    final imagesDir = Directory(path.join(appDir.path, 'identity_maker', 'images'));
-    
+    final imagesDir = Directory(
+      path.join(appDir.path, 'identity_maker', 'images'),
+    );
+
     // إنشاء المجلد إذا لم يكن موجوداً
     if (!await imagesDir.exists()) {
       await imagesDir.create(recursive: true);
     }
 
     // إنشاء اسم فريد للصورة
-    final fileName = '${DateTime.now().millisecondsSinceEpoch}${path.extension(sourcePath)}';
+    final fileName =
+        '${DateTime.now().millisecondsSinceEpoch}${path.extension(sourcePath)}';
     final destinationPath = path.join(imagesDir.path, fileName);
 
     // نسخ الصورة
@@ -107,8 +110,10 @@ class ImageService {
   Future<void> cleanupUnusedImages(List<String> usedImagePaths) async {
     try {
       final appDir = await getApplicationDocumentsDirectory();
-      final imagesDir = Directory(path.join(appDir.path, 'identity_maker', 'images'));
-      
+      final imagesDir = Directory(
+        path.join(appDir.path, 'identity_maker', 'images'),
+      );
+
       if (await imagesDir.exists()) {
         final files = await imagesDir.list().toList();
         for (final file in files) {

@@ -106,7 +106,7 @@ class TemplateDesignerProvider extends ChangeNotifier {
   Future<void> pickCustomBackgroundImage() async {
     final imageService = ImageService();
     final imagePath = await imageService.pickImageFromComputer();
-    
+
     if (imagePath != null) {
       updateBackgroundProperties({
         ..._backgroundProperties,
@@ -129,10 +129,7 @@ class TemplateDesignerProvider extends ChangeNotifier {
 
   /// تحديث نوع عرض صورة الخلفية
   void updateBackgroundImageFit(String fitType) {
-    updateBackgroundProperties({
-      ..._backgroundProperties,
-      'imageFit': fitType,
-    });
+    updateBackgroundProperties({..._backgroundProperties, 'imageFit': fitType});
   }
 
   // Element methods
@@ -441,7 +438,7 @@ class TemplateDesignerProvider extends ChangeNotifier {
   }) async {
     final imageService = ImageService();
     final imagePath = await imageService.pickImageFromComputer();
-    
+
     if (imagePath != null) {
       final element = TemplateElement(
         id: 'image_${DateTime.now().millisecondsSinceEpoch}',
@@ -466,7 +463,7 @@ class TemplateDesignerProvider extends ChangeNotifier {
   Future<void> updateElementImage(String elementId) async {
     final imageService = ImageService();
     final imagePath = await imageService.pickImageFromComputer();
-    
+
     if (imagePath != null) {
       final index = _elements.indexWhere((e) => e.id == elementId);
       if (index != -1) {
@@ -474,13 +471,13 @@ class TemplateDesignerProvider extends ChangeNotifier {
         final updatedProperties = Map<String, dynamic>.from(element.properties);
         updatedProperties['source'] = imagePath;
         updatedProperties['imageType'] = 'custom';
-        
+
         _elements[index] = element.copyWith(properties: updatedProperties);
-        
+
         if (_selectedElement?.id == elementId) {
           _selectedElement = _elements[index];
         }
-        
+
         _saveToHistory();
         notifyListeners();
       }
