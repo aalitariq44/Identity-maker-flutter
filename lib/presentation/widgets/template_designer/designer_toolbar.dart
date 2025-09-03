@@ -125,8 +125,7 @@ class DesignerToolbar extends StatelessWidget {
               MenuFlyoutItem(
                 leading: Icon(FluentIcons.photo2),
                 text: Text('صورة مخصصة'),
-                onPressed: () =>
-                    provider.addImageElement(source: 'custom_image'),
+                onPressed: () => provider.addCustomImageElement(),
               ),
             ],
           ),

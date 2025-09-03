@@ -1,6 +1,7 @@
 import 'package:fluent_ui/fluent_ui.dart';
 import 'dart:math' as math;
 import '../../data/models/template.dart';
+import '../../core/services/image_service.dart';
 
 class TemplateDesignerProvider extends ChangeNotifier {
   // Template properties
@@ -99,6 +100,39 @@ class TemplateDesignerProvider extends ChangeNotifier {
   void updateBackgroundProperties(Map<String, dynamic> properties) {
     _backgroundProperties = Map.from(properties);
     notifyListeners();
+  }
+
+  /// اختيار صورة خلفية مخصصة من الكمبيوتر
+  Future<void> pickCustomBackgroundImage() async {
+    final imageService = ImageService();
+    final imagePath = await imageService.pickImageFromComputer();
+    
+    if (imagePath != null) {
+      updateBackgroundProperties({
+        ..._backgroundProperties,
+        'image': imagePath,
+        'imageType': 'custom',
+        'imageFit': 'cover', // القيمة الافتراضية
+      });
+    }
+  }
+
+  /// إزالة صورة الخلفية
+  void removeBackgroundImage() {
+    updateBackgroundProperties({
+      ..._backgroundProperties,
+      'image': null,
+      'imageType': null,
+      'imageFit': null,
+    });
+  }
+
+  /// تحديث نوع عرض صورة الخلفية
+  void updateBackgroundImageFit(String fitType) {
+    updateBackgroundProperties({
+      ..._backgroundProperties,
+      'imageFit': fitType,
+    });
   }
 
   // Element methods
@@ -390,11 +424,67 @@ class TemplateDesignerProvider extends ChangeNotifier {
         'source': source,
         'fit': 'contain',
         'borderRadius': 0,
+        'imageType': source == 'custom' ? 'custom' : 'builtin',
         ...?properties,
       },
       zIndex: _getNextZIndex(),
     );
     addElement(element);
+  }
+
+  /// إضافة عنصر صورة مخصصة
+  Future<void> addCustomImageElement({
+    double? x,
+    double? y,
+    double? width,
+    double? height,
+  }) async {
+    final imageService = ImageService();
+    final imagePath = await imageService.pickImageFromComputer();
+    
+    if (imagePath != null) {
+      final element = TemplateElement(
+        id: 'image_${DateTime.now().millisecondsSinceEpoch}',
+        type: 'image',
+        x: x ?? 1.0,
+        y: y ?? 1.0,
+        width: width ?? 2.0,
+        height: height ?? 2.0,
+        properties: {
+          'source': imagePath,
+          'fit': 'contain',
+          'borderRadius': 0,
+          'imageType': 'custom',
+        },
+        zIndex: _getNextZIndex(),
+      );
+      addElement(element);
+    }
+  }
+
+  /// تحديث صورة عنصر موجود
+  Future<void> updateElementImage(String elementId) async {
+    final imageService = ImageService();
+    final imagePath = await imageService.pickImageFromComputer();
+    
+    if (imagePath != null) {
+      final index = _elements.indexWhere((e) => e.id == elementId);
+      if (index != -1) {
+        final element = _elements[index];
+        final updatedProperties = Map<String, dynamic>.from(element.properties);
+        updatedProperties['source'] = imagePath;
+        updatedProperties['imageType'] = 'custom';
+        
+        _elements[index] = element.copyWith(properties: updatedProperties);
+        
+        if (_selectedElement?.id == elementId) {
+          _selectedElement = _elements[index];
+        }
+        
+        _saveToHistory();
+        notifyListeners();
+      }
+    }
   }
 
   void addShapeElement({

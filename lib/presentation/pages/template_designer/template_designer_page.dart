@@ -5,8 +5,9 @@ import '../../providers/template_provider.dart';
 import '../../providers/template_designer_provider.dart';
 import '../../widgets/template_designer/designer_canvas.dart';
 import '../../widgets/template_designer/designer_toolbar.dart';
-import '../../widgets/template_designer/properties_panel.dart';
 import '../../widgets/template_designer/elements_panel.dart';
+import '../../widgets/template_designer/background_settings_panel.dart';
+import '../../widgets/template_designer/element_properties_panel.dart';
 import '../../../data/models/template.dart';
 
 class TemplateDesignerPage extends StatefulWidget {
@@ -77,8 +78,8 @@ class _TemplateDesignerPageState extends State<TemplateDesignerPage> {
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
                                     Icon(FluentIcons.settings, size: 16),
-                                    const SizedBox(width: 8),
-                                    Text('إعدادات القالب'),
+                                    const SizedBox(width: 4),
+                                    Text('إعدادات', style: TextStyle(fontSize: 12)),
                                   ],
                                 ),
                               ),
@@ -110,12 +111,43 @@ class _TemplateDesignerPageState extends State<TemplateDesignerPage> {
                                 child: Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
-                                    Icon(FluentIcons.stack, size: 16),
-                                    const SizedBox(width: 8),
-                                    Text(
-                                      'الطبقات',
-                                      style: TextStyle(color: Colors.black),
+                                    Icon(FluentIcons.photo2, size: 16),
+                                    const SizedBox(width: 4),
+                                    Text('خلفية', style: TextStyle(fontSize: 12)),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                          Expanded(
+                            child: Button(
+                              onPressed: () =>
+                                  setState(() => _currentTabIndex = 2),
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 8,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: _currentTabIndex == 2
+                                      ? FluentTheme.of(
+                                          context,
+                                        ).accentColor.withOpacity(0.1)
+                                      : null,
+                                  border: Border(
+                                    bottom: BorderSide(
+                                      color: _currentTabIndex == 2
+                                          ? FluentTheme.of(context).accentColor
+                                          : Colors.transparent,
+                                      width: 2,
                                     ),
+                                  ),
+                                ),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Icon(FluentIcons.stack, size: 16),
+                                    const SizedBox(width: 4),
+                                    Text('طبقات', style: TextStyle(fontSize: 12)),
                                   ],
                                 ),
                               ),
@@ -125,14 +157,7 @@ class _TemplateDesignerPageState extends State<TemplateDesignerPage> {
                       ),
                       // Tab Content
                       Expanded(
-                        child: _currentTabIndex == 0
-                            ? SingleChildScrollView(
-                                child: _buildTemplateSettings(
-                                  context,
-                                  designerProvider,
-                                ),
-                              )
-                            : const ElementsPanel(),
+                        child: _getTabContent(_currentTabIndex, designerProvider),
                       ),
                     ],
                   ),
@@ -164,7 +189,7 @@ class _TemplateDesignerPageState extends State<TemplateDesignerPage> {
                       ),
                     ),
                   ),
-                  child: const PropertiesPanel(),
+                  child: ElementPropertiesPanel(),
                 ),
               ],
             ),
@@ -172,6 +197,24 @@ class _TemplateDesignerPageState extends State<TemplateDesignerPage> {
         },
       ),
     );
+  }
+
+  Widget _getTabContent(int index, TemplateDesignerProvider provider) {
+    switch (index) {
+      case 0:
+        return SingleChildScrollView(
+          child: _buildTemplateSettings(context, provider),
+        );
+      case 1:
+        return BackgroundSettingsPanel();
+      case 2:
+        return const ElementsPanel();
+      default:
+        return SingleChildScrollView(
+          child: _buildTemplateSettings(context, provider),
+        );
+    }
+  }
   }
 
   Widget _buildTemplateSettings(
@@ -504,7 +547,6 @@ class _TemplateDesignerPageState extends State<TemplateDesignerPage> {
       ),
     );
   }
-}
 
 class TemplateDesignerHeader extends StatelessWidget {
   const TemplateDesignerHeader({super.key});

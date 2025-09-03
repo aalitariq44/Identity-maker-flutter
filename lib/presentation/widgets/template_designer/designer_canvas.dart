@@ -2,8 +2,10 @@ import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter/gestures.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/services.dart';
+import 'dart:io';
 import '../../providers/template_designer_provider.dart';
 import '../../../data/models/template.dart';
+import '../../../core/constants/image_fit_constants.dart';
 
 class DesignerCanvas extends StatefulWidget {
   const DesignerCanvas({super.key});
@@ -195,7 +197,10 @@ class _DesignerCanvasState extends State<DesignerCanvas> {
     final color = _getBackgroundColor(properties);
     final opacity = (properties['opacity'] as num?)?.toDouble() ?? 1.0;
     final image = properties['image'] as String?;
+    final imageType = properties['imageType'] as String?;
+    final imageFit = properties['imageFit'] as String? ?? 'cover';
 
+    // الحاوية الأساسية بلون الخلفية
     Widget backgroundWidget = Container(
       width: double.infinity,
       height: double.infinity,
@@ -203,20 +208,47 @@ class _DesignerCanvasState extends State<DesignerCanvas> {
     );
 
     if (image != null && image != 'none') {
-      // TODO: Add image background support
-      // For now, just show a placeholder
-      backgroundWidget = Container(
-        width: double.infinity,
-        height: double.infinity,
-        color: color.withOpacity(opacity),
-        child: Center(
-          child: Icon(
-            FluentIcons.photo2,
-            color: Colors.grey.withOpacity(0.3),
-            size: 48,
+      Widget imageWidget;
+      
+      if (imageType == 'custom' && File(image).existsSync()) {
+        // عرض الصورة المخصصة من الكمبيوتر
+        imageWidget = Container(
+          width: double.infinity,
+          height: double.infinity,
+          decoration: BoxDecoration(
+            image: DecorationImage(
+              image: FileImage(File(image)),
+              fit: ImageFitConstants.getBoxFitFromString(imageFit),
+            ),
           ),
-        ),
-      );
+        );
+      } else {
+        // عرض رمز مؤقت للصور غير الموجودة
+        imageWidget = Container(
+          width: double.infinity,
+          height: double.infinity,
+          color: color.withOpacity(opacity),
+          child: Center(
+            child: Icon(
+              FluentIcons.photo2,
+              color: Colors.grey.withOpacity(0.3),
+              size: 48,
+            ),
+          ),
+        );
+      }
+
+      // دمج لون الخلفية مع الصورة إذا كان هناك شفافية
+      if (opacity < 1.0) {
+        backgroundWidget = Stack(
+          children: [
+            backgroundWidget,
+            imageWidget,
+          ],
+        );
+      } else {
+        backgroundWidget = imageWidget;
+      }
     }
 
     return backgroundWidget;
@@ -314,12 +346,25 @@ class _DesignerCanvasState extends State<DesignerCanvas> {
   Widget _buildImageElement(TemplateElement element) {
     final properties = element.properties;
     final source = properties['source'] as String? ?? '';
-    final borderRadius =
-        (properties['borderRadius'] as num?)?.toDouble() ?? 0.0;
+    final borderRadius = (properties['borderRadius'] as num?)?.toDouble() ?? 0.0;
+    final imageType = properties['imageType'] as String?;
+    final fit = properties['fit'] as String? ?? 'contain';
 
     Widget imageWidget;
 
-    if (source == 'student_photo') {
+    if (imageType == 'custom' && File(source).existsSync()) {
+      // عرض الصورة المخصصة من الكمبيوتر
+      imageWidget = Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(borderRadius),
+          image: DecorationImage(
+            image: FileImage(File(source)),
+            fit: ImageFitConstants.getBoxFitFromString(fit),
+          ),
+        ),
+      );
+    } else if (source == 'student_photo') {
+      // صورة الطالب المؤقتة
       imageWidget = Container(
         decoration: BoxDecoration(
           color: Colors.blue.withOpacity(0.1),
@@ -331,10 +376,26 @@ class _DesignerCanvasState extends State<DesignerCanvas> {
           ),
         ),
         child: Center(
-          child: Icon(FluentIcons.contact, color: Colors.blue, size: 24),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(FluentIcons.contact, color: Colors.blue, size: 24),
+              const SizedBox(height: 4),
+              Text(
+                'صورة الطالب',
+                style: TextStyle(
+                  color: Colors.blue,
+                  fontSize: 10,
+                  fontFamily: 'NotoSansArabic',
+                ),
+                textAlign: TextAlign.center,
+              ),
+            ],
+          ),
         ),
       );
     } else if (source == 'school_logo') {
+      // شعار المدرسة المؤقت
       imageWidget = Container(
         decoration: BoxDecoration(
           color: Colors.green.withOpacity(0.1),
@@ -346,10 +407,26 @@ class _DesignerCanvasState extends State<DesignerCanvas> {
           ),
         ),
         child: Center(
-          child: Icon(FluentIcons.education, color: Colors.green, size: 24),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(FluentIcons.education, color: Colors.green, size: 24),
+              const SizedBox(height: 4),
+              Text(
+                'شعار المدرسة',
+                style: TextStyle(
+                  color: Colors.green,
+                  fontSize: 10,
+                  fontFamily: 'NotoSansArabic',
+                ),
+                textAlign: TextAlign.center,
+              ),
+            ],
+          ),
         ),
       );
     } else {
+      // صورة عامة أو غير موجودة
       imageWidget = Container(
         decoration: BoxDecoration(
           color: Colors.grey.withOpacity(0.1),
@@ -360,8 +437,23 @@ class _DesignerCanvasState extends State<DesignerCanvas> {
             style: BorderStyle.solid,
           ),
         ),
-        child: const Center(
-          child: Icon(FluentIcons.photo2, color: Colors.grey, size: 24),
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Icon(FluentIcons.photo2, color: Colors.grey, size: 24),
+              const SizedBox(height: 4),
+              Text(
+                'اختر صورة',
+                style: TextStyle(
+                  color: Colors.grey,
+                  fontSize: 10,
+                  fontFamily: 'NotoSansArabic',
+                ),
+                textAlign: TextAlign.center,
+              ),
+            ],
+          ),
         ),
       );
     }
