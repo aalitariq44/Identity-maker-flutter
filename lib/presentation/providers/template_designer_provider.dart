@@ -25,7 +25,7 @@ class TemplateDesignerProvider extends ChangeNotifier {
   Offset _canvasOffset = Offset.zero;
 
   // Grid properties
-  bool _showGrid = true;
+  bool _showGrid = false; // تعطيل الشبكة بشكل افتراضي
   double _gridSpacing = 0.5; // cm
   Color _gridColor = const Color.fromRGBO(128, 128, 128, 0.3);
 
@@ -223,6 +223,75 @@ class TemplateDesignerProvider extends ChangeNotifier {
       _elements[index] = element.copyWith(
         width: clampedWidth,
         height: clampedHeight,
+      );
+
+      if (_selectedElement?.id == elementId) {
+        _selectedElement = _elements[index];
+      }
+
+      notifyListeners();
+    }
+  }
+
+  void rotateElement(String elementId, double rotation) {
+    final index = _elements.indexWhere((e) => e.id == elementId);
+    if (index != -1) {
+      _elements[index] = _elements[index].copyWithRotation(rotation);
+
+      if (_selectedElement?.id == elementId) {
+        _selectedElement = _elements[index];
+      }
+
+      notifyListeners();
+    }
+  }
+
+  void resizeElementFromCorner(
+    String elementId,
+    double deltaX,
+    double deltaY,
+    String corner,
+  ) {
+    final index = _elements.indexWhere((e) => e.id == elementId);
+    if (index != -1) {
+      final element = _elements[index];
+      double newWidth = element.width;
+      double newHeight = element.height;
+      double newX = element.x;
+      double newY = element.y;
+
+      switch (corner) {
+        case 'top-left':
+          newWidth = math.max(0.1, element.width - deltaX);
+          newHeight = math.max(0.1, element.height - deltaY);
+          newX = element.x + deltaX;
+          newY = element.y + deltaY;
+          break;
+        case 'top-right':
+          newWidth = math.max(0.1, element.width + deltaX);
+          newHeight = math.max(0.1, element.height - deltaY);
+          newY = element.y + deltaY;
+          break;
+        case 'bottom-left':
+          newWidth = math.max(0.1, element.width - deltaX);
+          newHeight = math.max(0.1, element.height + deltaY);
+          newX = element.x + deltaX;
+          break;
+        case 'bottom-right':
+          newWidth = math.max(0.1, element.width + deltaX);
+          newHeight = math.max(0.1, element.height + deltaY);
+          break;
+      }
+
+      // Ensure element stays within template bounds
+      newX = math.max(0.0, math.min(_templateWidth - newWidth, newX));
+      newY = math.max(0.0, math.min(_templateHeight - newHeight, newY));
+
+      _elements[index] = element.copyWith(
+        x: newX,
+        y: newY,
+        width: newWidth,
+        height: newHeight,
       );
 
       if (_selectedElement?.id == elementId) {

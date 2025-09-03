@@ -3,6 +3,7 @@ import 'package:flutter/gestures.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/services.dart';
 import 'dart:io';
+import 'dart:math' as math;
 import '../../providers/template_designer_provider.dart';
 import '../../../data/models/template.dart';
 import '../../../core/constants/image_fit_constants.dart';
@@ -17,6 +18,7 @@ class DesignerCanvas extends StatefulWidget {
 class _DesignerCanvasState extends State<DesignerCanvas> {
   static const double _cmToPx = 37.795; // 1 cm = 37.795 pixels at 96 DPI
   final FocusNode _focusNode = FocusNode();
+  double _initialRotation = 0.0;
 
   @override
   Widget build(BuildContext context) {
@@ -266,28 +268,61 @@ class _DesignerCanvasState extends State<DesignerCanvas> {
       top: element.y * _cmToPx,
       width: element.width * _cmToPx,
       height: element.height * _cmToPx,
-      child: GestureDetector(
-        onTapDown: (_) {}, // Prevent event from bubbling to parent
-        onTap: () => provider.selectElement(element),
-        onPanStart: (_) => provider.selectElement(
-          element,
-        ), // Ensure element is selected when dragging starts
-        onPanUpdate: (details) {
-          final deltaX = details.delta.dx / _cmToPx;
-          final deltaY = details.delta.dy / _cmToPx;
-          provider.moveElement(element.id, deltaX, deltaY);
-        },
-        child: Container(
-          decoration: isSelected
-              ? BoxDecoration(border: Border.all(color: Colors.red, width: 2.0))
-              : null,
-          child: _buildElementContent(element),
-        ),
+      child: Stack(
+        children: [
+          // Element content
+          GestureDetector(
+            onTapDown: (_) {}, // Prevent event from bubbling to parent
+            onTap: () => provider.selectElement(element),
+            onPanStart: (_) => provider.selectElement(element),
+            onPanUpdate: (details) {
+              final deltaX = details.delta.dx / _cmToPx;
+              final deltaY = details.delta.dy / _cmToPx;
+              provider.moveElement(element.id, deltaX, deltaY);
+            },
+            child: Container(
+              decoration: isSelected
+                  ? BoxDecoration(
+                      border: Border.all(color: Colors.red, width: 2.0),
+                    )
+                  : null,
+              child: _buildElementContent(element),
+            ),
+          ),
+
+          // Selection handles (only show when selected)
+          if (isSelected) ...[
+            // Corner resize handles
+            _buildResizeHandle(element, 'top-left', provider),
+            _buildResizeHandle(element, 'top-right', provider),
+            _buildResizeHandle(element, 'bottom-left', provider),
+            _buildResizeHandle(element, 'bottom-right', provider),
+
+            // Rotation handle
+            _buildRotationHandle(element, provider),
+          ],
+        ],
       ),
     );
   }
 
   Widget _buildElementContent(TemplateElement element) {
+    final rotation = element.rotation;
+
+    Widget content = Container(
+      width: double.infinity,
+      height: double.infinity,
+      child: _buildElementTypeContent(element),
+    );
+
+    if (rotation != 0) {
+      content = Transform.rotate(angle: rotation, child: content);
+    }
+
+    return content;
+  }
+
+  Widget _buildElementTypeContent(TemplateElement element) {
     switch (element.type) {
       case 'text':
         return _buildTextElement(element);
@@ -543,6 +578,99 @@ class _DesignerCanvasState extends State<DesignerCanvas> {
       default:
         return TextAlign.right;
     }
+  }
+
+  Widget _buildResizeHandle(
+    TemplateElement element,
+    String corner,
+    TemplateDesignerProvider provider,
+  ) {
+    double left = 0;
+    double top = 0;
+
+    switch (corner) {
+      case 'top-left':
+        left = -6;
+        top = -6;
+        break;
+      case 'top-right':
+        left = element.width * _cmToPx - 6;
+        top = -6;
+        break;
+      case 'bottom-left':
+        left = -6;
+        top = element.height * _cmToPx - 6;
+        break;
+      case 'bottom-right':
+        left = element.width * _cmToPx - 6;
+        top = element.height * _cmToPx - 6;
+        break;
+    }
+
+    return Positioned(
+      left: left,
+      top: top,
+      child: GestureDetector(
+        onPanUpdate: (details) {
+          final deltaX = details.delta.dx / _cmToPx;
+          final deltaY = details.delta.dy / _cmToPx;
+          provider.resizeElementFromCorner(element.id, deltaX, deltaY, corner);
+        },
+        child: Container(
+          width: 12,
+          height: 12,
+          decoration: BoxDecoration(
+            color: Colors.blue,
+            border: Border.all(color: Colors.white, width: 1),
+            shape: BoxShape.circle,
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildRotationHandle(
+    TemplateElement element,
+    TemplateDesignerProvider provider,
+  ) {
+    return Positioned(
+      left: (element.width * _cmToPx) / 2 - 6,
+      top: -30,
+      child: GestureDetector(
+        onPanStart: (details) {
+          // Store initial rotation for relative rotation calculation
+          _initialRotation = element.rotation;
+        },
+        onPanUpdate: (details) {
+          // Calculate rotation based on drag direction relative to element center
+          final elementCenterX =
+              element.x * _cmToPx + (element.width * _cmToPx) / 2;
+          final elementCenterY =
+              element.y * _cmToPx + (element.height * _cmToPx) / 2;
+
+          final dragX = details.globalPosition.dx;
+          final dragY = details.globalPosition.dy;
+
+          final angle = math.atan2(
+            dragY - elementCenterY,
+            dragX - elementCenterX,
+          );
+          provider.rotateElement(element.id, angle);
+        },
+        child: Container(
+          width: 12,
+          height: 12,
+          decoration: BoxDecoration(
+            color: Colors.green,
+            border: Border.all(color: Colors.white, width: 1),
+            shape: BoxShape.circle,
+          ),
+          child: Center(
+            child: Icon(FluentIcons.rotate, size: 8, color: Colors.white),
+          ),
+        ),
+      ),
+    );
   }
 }
 

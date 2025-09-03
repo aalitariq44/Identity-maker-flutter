@@ -67,6 +67,15 @@ class TemplateElement {
     );
   }
 
+  // Helper methods for rotation
+  double get rotation => (properties['rotation'] as num?)?.toDouble() ?? 0.0;
+
+  TemplateElement copyWithRotation(double rotation) {
+    final newProperties = Map<String, dynamic>.from(properties);
+    newProperties['rotation'] = rotation;
+    return copyWith(properties: newProperties);
+  }
+
   @override
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
