@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:sqflite_common_ffi/sqflite_ffi.dart';
-import 'dart:io';
+import 'package:flutter/foundation.dart';
 import 'app.dart';
 
-void main() {
-  // Initialize sqflite for desktop platforms
-  if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
-    databaseFactory = databaseFactoryFfi;
-  }
+// Conditional imports for different platforms
+import 'main_io.dart' if (dart.library.html) 'main_web.dart';
 
+void main() {
+  // Initialize platform-specific configurations
+  initializePlatform();
+  
   runApp(const IdentityMakerApp());
 }

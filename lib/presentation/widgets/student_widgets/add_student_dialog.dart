@@ -1,8 +1,8 @@
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:provider/provider.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:file_picker/file_picker.dart';
-import 'dart:io';
+import 'package:flutter/foundation.dart';
+import 'dart:typed_data';
 import '../../../data/models/student.dart';
 import '../../providers/student_provider.dart';
 import '../../providers/school_provider.dart';
@@ -23,6 +23,7 @@ class _AddStudentDialogState extends State<AddStudentDialog> {
   DateTime? _birthDate;
   int? _selectedSchoolId;
   String? _photoPath;
+  Uint8List? _photoBytes;  // For web compatibility
   String? _selectedGrade;
   bool _isLoading = false;
 
@@ -210,16 +211,28 @@ class _AddStudentDialogState extends State<AddStudentDialog> {
   }
 
   Widget _buildPhotoPreview() {
-    if (_photoPath != null &&
-        _photoPath!.isNotEmpty &&
-        File(_photoPath!).existsSync()) {
+    if (_photoBytes != null) {
+      // Web: use bytes
       return Container(
         width: 60,
         height: 60,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(30),
           image: DecorationImage(
-            image: FileImage(File(_photoPath!)),
+            image: MemoryImage(_photoBytes!),
+            fit: BoxFit.cover,
+          ),
+        ),
+      );
+    } else if (_photoPath != null && _photoPath!.isNotEmpty && !kIsWeb) {
+      // Non-web: use file path
+      return Container(
+        width: 60,
+        height: 60,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(30),
+          image: DecorationImage(
+            image: NetworkImage(_photoPath!),  // Use NetworkImage for compatibility
             fit: BoxFit.cover,
           ),
         ),
@@ -259,59 +272,17 @@ class _AddStudentDialogState extends State<AddStudentDialog> {
 
   Future<void> _selectPhoto() async {
     try {
-      if (Platform.isWindows) {
-        // Use file_picker for Windows
-        FilePickerResult? result = await FilePicker.platform.pickFiles(
-          type: FileType.image,
-          allowMultiple: false,
-        );
+      // Use file_picker for all platforms (web, desktop, mobile)
+      FilePickerResult? result = await FilePicker.platform.pickFiles(
+        type: FileType.image,
+        allowMultiple: false,
+      );
 
-        if (result != null && result.files.isNotEmpty) {
-          setState(() {
-            _photoPath = result.files.first.path;
-          });
-        }
-      } else {
-        // Use image_picker for mobile platforms
-        final ImagePicker picker = ImagePicker();
-
-        // Show options dialog
-        final source = await showDialog<ImageSource>(
-          context: context,
-          builder: (context) => ContentDialog(
-            title: const Text('اختر مصدر الصورة'),
-            content: const Text('كيف تريد اختيار الصورة؟'),
-            actions: [
-              Button(
-                onPressed: () => Navigator.of(context).pop(ImageSource.camera),
-                child: const Text('الكاميرا'),
-              ),
-              Button(
-                onPressed: () => Navigator.of(context).pop(ImageSource.gallery),
-                child: const Text('المعرض'),
-              ),
-              Button(
-                onPressed: () => Navigator.of(context).pop(),
-                child: const Text('إلغاء'),
-              ),
-            ],
-          ),
-        );
-
-        if (source == null) return;
-
-        final XFile? image = await picker.pickImage(
-          source: source,
-          maxWidth: 800,
-          maxHeight: 800,
-          imageQuality: 85,
-        );
-
-        if (image != null) {
-          setState(() {
-            _photoPath = image.path;
-          });
-        }
+      if (result != null && result.files.isNotEmpty) {
+        setState(() {
+          _photoPath = result.files.first.path;
+          _photoBytes = result.files.first.bytes;
+        });
       }
     } catch (e) {
       _showErrorMessage('فشل في اختيار الصورة: $e');

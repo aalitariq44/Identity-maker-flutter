@@ -1,9 +1,9 @@
 import 'package:fluent_ui/fluent_ui.dart';
 import '../../data/models/school.dart';
-import '../../core/database/database_provider.dart';
+import '../../core/database/platform_database_provider.dart';
 
 class SchoolProvider extends ChangeNotifier {
-  final DatabaseProvider _databaseProvider = DatabaseProvider();
+  final PlatformDatabaseProvider _databaseProvider = PlatformDatabaseProvider();
 
   List<School> _schools = [];
   School? _selectedSchool;

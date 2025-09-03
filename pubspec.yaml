@@ -12,6 +12,8 @@ dependencies:
     sdk: flutter
   flutter_localizations:
     sdk: flutter
+  flutter_web_plugins:
+    sdk: flutter
   fluent_ui: ^4.9.0
   provider: ^6.1.1
   sqflite: ^2.3.0
@@ -37,7 +39,8 @@ flutter:
   assets:
     - assets/images/
     - assets/templates/
-    - assets/fonts/
+    - assets/fonts/arabic/
+    - assets/fonts/english/
     - assets/localization/
 
   fonts:
