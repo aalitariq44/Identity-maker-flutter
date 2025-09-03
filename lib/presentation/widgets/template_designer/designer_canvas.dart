@@ -95,8 +95,6 @@ class _DesignerCanvasState extends State<DesignerCanvas> {
                             // Background selection overlay
                             if (provider.isBackgroundSelected)
                               _buildBackgroundSelectionOverlay(provider),
-                            // Grid control button
-                            _buildGridControlButton(provider),
                           ],
                         ),
                       ),
@@ -555,125 +553,6 @@ class _DesignerCanvasState extends State<DesignerCanvas> {
       default:
         return TextAlign.right;
     }
-  }
-
-  Widget _buildGridControlButton(TemplateDesignerProvider provider) {
-    return Positioned(
-      top: 10,
-      right: 10,
-      child: Container(
-        decoration: BoxDecoration(
-          color: Colors.white.withOpacity(0.9),
-          borderRadius: BorderRadius.circular(8),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.1),
-              blurRadius: 4,
-              offset: const Offset(0, 2),
-            ),
-          ],
-        ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Button(
-              child: Icon(
-                provider.showGrid
-                    ? FluentIcons.grid_view_small
-                    : FluentIcons.grid_view_medium,
-                size: 20,
-              ),
-              onPressed: () => provider.setShowGrid(!provider.showGrid),
-            ),
-            Button(
-              child: const Icon(FluentIcons.more, size: 20),
-              onPressed: () {
-                showDialog(
-                  context: context,
-                  builder: (dialogContext) => ContentDialog(
-                    title: const Text('إعدادات الشبكة'),
-                    content: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        const Text('مسافة الخطوط:'),
-                        Row(
-                          children: [
-                            Button(
-                              child: const Text('0.25 سم'),
-                              onPressed: () {
-                                provider.setGridSpacing(0.25);
-                                Navigator.of(dialogContext).pop();
-                              },
-                            ),
-                            const SizedBox(width: 8),
-                            Button(
-                              child: const Text('0.5 سم'),
-                              onPressed: () {
-                                provider.setGridSpacing(0.5);
-                                Navigator.of(dialogContext).pop();
-                              },
-                            ),
-                            const SizedBox(width: 8),
-                            Button(
-                              child: const Text('1 سم'),
-                              onPressed: () {
-                                provider.setGridSpacing(1.0);
-                                Navigator.of(dialogContext).pop();
-                              },
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 16),
-                        const Text('لون الخطوط:'),
-                        Row(
-                          children: [
-                            Button(
-                              child: const Text('فاتح'),
-                              onPressed: () {
-                                provider.setGridColor(
-                                  Colors.grey.withOpacity(0.2),
-                                );
-                                Navigator.of(dialogContext).pop();
-                              },
-                            ),
-                            const SizedBox(width: 8),
-                            Button(
-                              child: const Text('متوسط'),
-                              onPressed: () {
-                                provider.setGridColor(
-                                  Colors.grey.withOpacity(0.4),
-                                );
-                                Navigator.of(dialogContext).pop();
-                              },
-                            ),
-                            const SizedBox(width: 8),
-                            Button(
-                              child: const Text('داكن'),
-                              onPressed: () {
-                                provider.setGridColor(
-                                  Colors.grey.withOpacity(0.6),
-                                );
-                                Navigator.of(dialogContext).pop();
-                              },
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                    actions: [
-                      Button(
-                        child: const Text('إغلاق'),
-                        onPressed: () => Navigator.of(dialogContext).pop(),
-                      ),
-                    ],
-                  ),
-                );
-              },
-            ),
-          ],
-        ),
-      ),
-    );
   }
 }
 

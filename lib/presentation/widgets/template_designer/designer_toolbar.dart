@@ -51,6 +51,21 @@ class DesignerToolbar extends StatelessWidget {
 
               // Layer Controls
               _buildLayerSection(provider),
+              Container(
+                height: 30,
+                width: 1,
+                color: FluentTheme.of(context).resources.cardStrokeColorDefault,
+                margin: const EdgeInsets.symmetric(horizontal: 8),
+              ),
+
+              // Grid Controls
+              _buildGridSection(provider, context),
+              Container(
+                height: 30,
+                width: 1,
+                color: FluentTheme.of(context).resources.cardStrokeColorDefault,
+                margin: const EdgeInsets.symmetric(horizontal: 8),
+              ),
 
               const Spacer(),
 
@@ -287,6 +302,77 @@ class DesignerToolbar extends StatelessWidget {
                 : null,
             child: Icon(FluentIcons.copy, size: 16),
           ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildGridSection(
+    TemplateDesignerProvider provider,
+    BuildContext context,
+  ) {
+    return Row(
+      children: [
+        Text(
+          'شبكة:',
+          style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500),
+        ),
+        const SizedBox(width: 8),
+
+        // Toggle Grid
+        Tooltip(
+          message: provider.showGrid ? 'إخفاء الشبكة' : 'إظهار الشبكة',
+          child: Button(
+            onPressed: () => provider.setShowGrid(!provider.showGrid),
+            child: Icon(
+              provider.showGrid
+                  ? FluentIcons.grid_view_small
+                  : FluentIcons.grid_view_medium,
+              size: 16,
+            ),
+          ),
+        ),
+        const SizedBox(width: 4),
+
+        // Grid Settings
+        DropDownButton(
+          leading: Icon(FluentIcons.more, size: 16),
+          items: [
+            MenuFlyoutItem(
+              leading: Icon(FluentIcons.scale_volume, size: 16),
+              text: Text('مسافة 0.25 سم'),
+              onPressed: () => provider.setGridSpacing(0.25),
+            ),
+            MenuFlyoutItem(
+              leading: Icon(FluentIcons.scale_volume, size: 16),
+              text: Text('مسافة 0.5 سم'),
+              onPressed: () => provider.setGridSpacing(0.5),
+            ),
+            MenuFlyoutItem(
+              leading: Icon(FluentIcons.scale_volume, size: 16),
+              text: Text('مسافة 1 سم'),
+              onPressed: () => provider.setGridSpacing(1.0),
+            ),
+            const MenuFlyoutSeparator(),
+            MenuFlyoutItem(
+              leading: Icon(FluentIcons.color, size: 16),
+              text: Text('لون فاتح'),
+              onPressed: () =>
+                  provider.setGridColor(Colors.grey.withOpacity(0.2)),
+            ),
+            MenuFlyoutItem(
+              leading: Icon(FluentIcons.color, size: 16),
+              text: Text('لون متوسط'),
+              onPressed: () =>
+                  provider.setGridColor(Colors.grey.withOpacity(0.4)),
+            ),
+            MenuFlyoutItem(
+              leading: Icon(FluentIcons.color, size: 16),
+              text: Text('لون داكن'),
+              onPressed: () =>
+                  provider.setGridColor(Colors.grey.withOpacity(0.6)),
+            ),
+          ],
         ),
       ],
     );
