@@ -32,7 +32,11 @@ class ElementsPanel extends StatelessWidget {
           children: [
             Text(
               'إضافة عنصر جديد',
-              style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13, color: Colors.black),
+              style: TextStyle(
+                fontWeight: FontWeight.w600,
+                fontSize: 13,
+                color: Colors.black,
+              ),
             ),
             const SizedBox(height: 12),
 
@@ -58,7 +62,11 @@ class ElementsPanel extends StatelessWidget {
       children: [
         Text(
           'نصوص',
-          style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500, color: Colors.black),
+          style: TextStyle(
+            fontSize: 12,
+            fontWeight: FontWeight.w500,
+            color: Colors.black,
+          ),
         ),
         const SizedBox(height: 4),
         GridView.count(
@@ -114,7 +122,11 @@ class ElementsPanel extends StatelessWidget {
       children: [
         Text(
           'صور',
-          style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500, color: Colors.black),
+          style: TextStyle(
+            fontSize: 12,
+            fontWeight: FontWeight.w500,
+            color: Colors.black,
+          ),
         ),
         const SizedBox(height: 4),
         GridView.count(
@@ -159,7 +171,11 @@ class ElementsPanel extends StatelessWidget {
       children: [
         Text(
           'أشكال',
-          style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500, color: Colors.black),
+          style: TextStyle(
+            fontSize: 12,
+            fontWeight: FontWeight.w500,
+            color: Colors.black,
+          ),
         ),
         const SizedBox(height: 4),
         GridView.count(
@@ -229,18 +245,12 @@ class ElementsPanel extends StatelessWidget {
             const SizedBox(height: 16),
             Text(
               'لا توجد عناصر',
-              style: TextStyle(
-                color: Colors.black,
-                fontSize: 14,
-              ),
+              style: TextStyle(color: Colors.black, fontSize: 14),
             ),
             const SizedBox(height: 8),
             Text(
               'أضف عنصر لبدء التصميم',
-              style: TextStyle(
-                color: Colors.black,
-                fontSize: 12,
-              ),
+              style: TextStyle(color: Colors.black, fontSize: 12),
             ),
           ],
         ),
@@ -310,7 +320,10 @@ class ElementsPanel extends StatelessWidget {
                   ),
                   MenuFlyoutItem(
                     leading: Icon(FluentIcons.up),
-                    text: Text('للمقدمة', style: TextStyle(color: Colors.black)),
+                    text: Text(
+                      'للمقدمة',
+                      style: TextStyle(color: Colors.black),
+                    ),
                     onPressed: () => provider.bringToFront(element.id),
                   ),
                   MenuFlyoutItem(
